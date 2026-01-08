@@ -8,6 +8,21 @@ export interface BirthDetails {
   gender?: string;
 }
 
+// Major cities list (focusing on Indian cities for Tamil astrology)
+const MAJOR_CITIES = [
+  'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli',
+  'Erode', 'Vellore', 'Thoothukudi', 'Dindigul', 'Thanjavur', 'Hosur',
+  'Nagercoil', 'Kanchipuram', 'Karaikudi', 'Udhagamandalam', 'Cuddalore',
+  'Bangalore', 'Mumbai', 'Delhi', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad',
+  'Jaipur', 'Surat', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Thane',
+  'Bhopal', 'Visakhapatnam', 'Patna', 'Vadodara', 'Ghaziabad', 'Ludhiana',
+  'Agra', 'Nashik', 'Faridabad', 'Meerut', 'Rajkot', 'Varanasi', 'Srinagar',
+  'Amritsar', 'Noida', 'Ranchi', 'Chandigarh', 'Jabalpur', 'Gwalior',
+  'Jodhpur', 'Raipur', 'Kota', 'Guwahati', 'Thiruvananthapuram', 'Kochi',
+  'Mysore', 'Mangalore', 'Hubli', 'Belgaum', 'Gulbarga', 'Davangere',
+  'Other'
+];
+
 interface InputFormProps {
   onSubmit: (details: BirthDetails | { person1: BirthDetails; person2: BirthDetails }) => void;
   isCouple?: boolean;
@@ -61,37 +76,83 @@ const InputForm = ({ onSubmit, isCouple = false }: InputFormProps) => {
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Date of Birth (DD/MM/YYYY) *</label>
+          <label className="block text-gray-700 font-semibold mb-2">Date of Birth *</label>
           <input
-            type="text"
+            type="date"
             required
-            value={person.dob}
-            onChange={(e) => setPerson({ ...person, dob: e.target.value })}
+            value={person.dob ? (() => {
+              // Convert DD/MM/YYYY to YYYY-MM-DD for date input
+              const parts = person.dob.split('/');
+              if (parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+              }
+              return person.dob.includes('-') ? person.dob : '';
+            })() : ''}
+            onChange={(e) => {
+              const dateValue = e.target.value;
+              // Convert YYYY-MM-DD to DD/MM/YYYY format for storage
+              if (dateValue) {
+                const [year, month, day] = dateValue.split('-');
+                const formattedDate = `${day}/${month}/${year}`;
+                setPerson({ ...person, dob: formattedDate });
+              } else {
+                setPerson({ ...person, dob: '' });
+              }
+            }}
             className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-            placeholder="DD/MM/YYYY"
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Time of Birth (HH:MM AM/PM) *</label>
+          <label className="block text-gray-700 font-semibold mb-2">Time of Birth *</label>
           <input
-            type="text"
+            type="time"
             required
-            value={person.time}
-            onChange={(e) => setPerson({ ...person, time: e.target.value })}
+            value={person.time ? (() => {
+              // Convert HH:MM AM/PM to 24-hour format for time input
+              const match = person.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+              if (match) {
+                let hour24 = parseInt(match[1], 10);
+                const minutes = match[2];
+                const ampm = match[3].toUpperCase();
+                if (ampm === 'PM' && hour24 !== 12) hour24 += 12;
+                if (ampm === 'AM' && hour24 === 12) hour24 = 0;
+                return `${hour24.toString().padStart(2, '0')}:${minutes}`;
+              }
+              // If already in 24-hour format, return as is
+              return person.time.includes('AM') || person.time.includes('PM') ? '' : person.time;
+            })() : ''}
+            onChange={(e) => {
+              const timeValue = e.target.value;
+              // Convert 24-hour format to 12-hour format with AM/PM
+              if (timeValue) {
+                const [hours, minutes] = timeValue.split(':');
+                const hour24 = parseInt(hours, 10);
+                const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+                const ampm = hour24 >= 12 ? 'PM' : 'AM';
+                const formattedTime = `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+                setPerson({ ...person, time: formattedTime });
+              } else {
+                setPerson({ ...person, time: '' });
+              }
+            }}
             className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-            placeholder="HH:MM AM/PM"
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Place of Birth (City, State, Country) *</label>
-          <input
-            type="text"
+          <label className="block text-gray-700 font-semibold mb-2">Place of Birth (City) *</label>
+          <select
             required
             value={person.place}
             onChange={(e) => setPerson({ ...person, place: e.target.value })}
             className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-            placeholder="City, State, Country"
-          />
+          >
+            <option value="">Select City</option>
+            {MAJOR_CITIES.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-gray-700 font-semibold mb-2">Gender (Optional)</label>

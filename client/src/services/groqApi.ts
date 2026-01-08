@@ -4,11 +4,22 @@ import type { PredictionResult } from '../types';
 
 // WARNING: Using dangerouslyAllowBrowser exposes your API key in the client bundle.
 // For production, consider creating a backend API to proxy Groq requests.
-const apiKey = import.meta.env.VITE_GROQ_API_KEY || '';
+const apiKey = import.meta.env.VITE_GROQ_API_KEY?.trim() || '';
 
-// Debug: Check if API key is loaded (remove in production)
+// Debug: Check if API key is loaded
 if (!apiKey) {
-  console.error('VITE_GROQ_API_KEY is not set. Please check your .env file and restart the dev server.');
+  console.error('❌ VITE_GROQ_API_KEY is not set!');
+  console.error('Please ensure:');
+  console.error('1. The .env file exists in the client/ directory');
+  console.error('2. It contains: VITE_GROQ_API_KEY=your_api_key_here');
+  console.error('3. You have RESTARTED the dev server after creating/modifying .env');
+  console.error('Current env check:', {
+    hasKey: !!import.meta.env.VITE_GROQ_API_KEY,
+    keyLength: import.meta.env.VITE_GROQ_API_KEY?.length || 0,
+    allEnvKeys: Object.keys(import.meta.env).filter(k => k.startsWith('VITE_'))
+  });
+} else {
+  console.log('✅ API Key loaded successfully (length:', apiKey.length, ')');
 }
 
 const groq = new Groq({
