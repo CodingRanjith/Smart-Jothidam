@@ -380,7 +380,7 @@ const InputForm = ({ onSubmit, isCouple = false, initialData }: InputFormProps) 
                     setErrors(newErrors);
                   }
                 }}
-                onBlur={(e) => {
+                onBlur={() => {
                   // Validate and format on blur
                   const timeValue = person.time || '';
                   const timeMatch = timeValue.match(/(\d{1,2}):?(\d{0,2})\s*([AP]?M?)?/i);
