@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import InputForm from '../components/InputForm';
 import type { BirthDetails } from '../components/InputForm';
 import Loader from '../components/Loader';
@@ -8,6 +8,8 @@ import { getSinglePersonJosiyam } from '../services/groqApi';
 const SingleJosiyam = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialData = location.state?.initialData as BirthDetails | undefined;
 
   const handleSubmit = async (details: BirthDetails | { person1: BirthDetails; person2: BirthDetails }) => {
     if ('name' in details) {
@@ -19,6 +21,7 @@ const SingleJosiyam = () => {
             type: 'single',
             result,
             personName: details.name,
+            birthDetails: details,
           } 
         });
       } catch (error) {
@@ -49,7 +52,7 @@ const SingleJosiyam = () => {
           <p className="text-gray-600 text-center mb-8">
             Enter your birth details to get comprehensive Tamil astrology predictions
           </p>
-          <InputForm onSubmit={handleSubmit} isCouple={false} />
+          <InputForm onSubmit={handleSubmit} isCouple={false} initialData={initialData} />
         </div>
       </div>
     </div>

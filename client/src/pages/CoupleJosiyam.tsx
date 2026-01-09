@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import InputForm from '../components/InputForm';
 import type { BirthDetails } from '../components/InputForm';
 import Loader from '../components/Loader';
@@ -8,6 +8,8 @@ import { getCoupleJosiyam } from '../services/groqApi';
 const CoupleJosiyam = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialData = location.state?.initialData as { person1: BirthDetails; person2: BirthDetails } | undefined;
 
   const handleSubmit = async (details: BirthDetails | { person1: BirthDetails; person2: BirthDetails }) => {
     if ('person1' in details) {
@@ -20,6 +22,7 @@ const CoupleJosiyam = () => {
             result,
             person1Name: details.person1.name,
             person2Name: details.person2.name,
+            birthDetails: details,
           } 
         });
       } catch (error) {
@@ -50,7 +53,7 @@ const CoupleJosiyam = () => {
           <p className="text-gray-600 text-center mb-8">
             Enter both persons' birth details for compatibility analysis and life together predictions
           </p>
-          <InputForm onSubmit={handleSubmit} isCouple={true} />
+          <InputForm onSubmit={handleSubmit} isCouple={true} initialData={initialData} />
         </div>
       </div>
     </div>

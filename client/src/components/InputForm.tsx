@@ -26,24 +26,42 @@ const MAJOR_CITIES = [
 interface InputFormProps {
   onSubmit: (details: BirthDetails | { person1: BirthDetails; person2: BirthDetails }) => void;
   isCouple?: boolean;
+  initialData?: BirthDetails | { person1: BirthDetails; person2: BirthDetails };
 }
 
-const InputForm = ({ onSubmit, isCouple = false }: InputFormProps) => {
-  const [person1, setPerson1] = useState<BirthDetails>({
-    name: '',
-    dob: '',
-    time: '',
-    place: '',
-    gender: '',
-  });
+const InputForm = ({ onSubmit, isCouple = false, initialData }: InputFormProps) => {
+  const getInitialPerson1 = (): BirthDetails => {
+    if (initialData) {
+      if ('name' in initialData) {
+        return initialData;
+      } else if ('person1' in initialData) {
+        return initialData.person1;
+      }
+    }
+    return {
+      name: '',
+      dob: '',
+      time: '',
+      place: '',
+      gender: '',
+    };
+  };
 
-  const [person2, setPerson2] = useState<BirthDetails>({
-    name: '',
-    dob: '',
-    time: '',
-    place: '',
-    gender: '',
-  });
+  const getInitialPerson2 = (): BirthDetails => {
+    if (initialData && 'person2' in initialData) {
+      return initialData.person2;
+    }
+    return {
+      name: '',
+      dob: '',
+      time: '',
+      place: '',
+      gender: '',
+    };
+  };
+
+  const [person1, setPerson1] = useState<BirthDetails>(getInitialPerson1());
+  const [person2, setPerson2] = useState<BirthDetails>(getInitialPerson2());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,55 +122,96 @@ const InputForm = ({ onSubmit, isCouple = false }: InputFormProps) => {
         </div>
         <div>
           <label className="block text-gray-700 font-semibold mb-2">Time of Birth *</label>
-          <input
-            type="time"
-            required
-            value={person.time ? (() => {
-              // Convert HH:MM AM/PM to 24-hour format for time input
-              const match = person.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-              if (match) {
-                let hour24 = parseInt(match[1], 10);
-                const minutes = match[2];
-                const ampm = match[3].toUpperCase();
-                if (ampm === 'PM' && hour24 !== 12) hour24 += 12;
-                if (ampm === 'AM' && hour24 === 12) hour24 = 0;
-                return `${hour24.toString().padStart(2, '0')}:${minutes}`;
-              }
-              // If already in 24-hour format, return as is
-              return person.time.includes('AM') || person.time.includes('PM') ? '' : person.time;
-            })() : ''}
-            onChange={(e) => {
-              const timeValue = e.target.value;
-              // Convert 24-hour format to 12-hour format with AM/PM
-              if (timeValue) {
-                const [hours, minutes] = timeValue.split(':');
-                const hour24 = parseInt(hours, 10);
-                const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
-                const ampm = hour24 >= 12 ? 'PM' : 'AM';
-                const formattedTime = `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
-                setPerson({ ...person, time: formattedTime });
-              } else {
-                setPerson({ ...person, time: '' });
-              }
-            }}
-            className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-          />
+          <div className="flex gap-2 items-center">
+            <div className="flex-1 flex gap-2">
+              <input
+                type="number"
+                required
+                min="1"
+                max="12"
+                placeholder="HH"
+                value={person.time ? (() => {
+                  const match = person.time.match(/(\d{1,2}):/);
+                  return match ? match[1] : '';
+                })() : ''}
+                onChange={(e) => {
+                  const hour = e.target.value;
+                  const match = person.time ? person.time.match(/:(\d{2})\s*(AM|PM)/i) : null;
+                  const minutes = match ? match[1] : '00';
+                  const ampm = match ? match[2].toUpperCase() : 'AM';
+                  if (hour) {
+                    setPerson({ ...person, time: `${hour.padStart(2, '0')}:${minutes} ${ampm}` });
+                  } else {
+                    setPerson({ ...person, time: `:${minutes} ${ampm}` });
+                  }
+                }}
+                className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+              <span className="self-center text-gray-600 font-bold">:</span>
+              <input
+                type="number"
+                required
+                min="0"
+                max="59"
+                placeholder="MM"
+                value={person.time ? (() => {
+                  const match = person.time.match(/:(\d{2})/);
+                  return match ? match[1] : '';
+                })() : ''}
+                onChange={(e) => {
+                  const minutes = e.target.value.padStart(2, '0');
+                  const match = person.time ? person.time.match(/(\d{1,2}):/i) : null;
+                  const hour = match ? match[1].padStart(2, '0') : '12';
+                  const ampmMatch = person.time ? person.time.match(/(AM|PM)/i) : null;
+                  const ampm = ampmMatch ? ampmMatch[1].toUpperCase() : 'AM';
+                  setPerson({ ...person, time: `${hour}:${minutes} ${ampm}` });
+                }}
+                className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+            </div>
+            <select
+              required
+              value={person.time ? (() => {
+                const match = person.time.match(/(AM|PM)/i);
+                return match ? match[1].toUpperCase() : 'AM';
+              })() : 'AM'}
+              onChange={(e) => {
+                const ampm = e.target.value;
+                const match = person.time ? person.time.match(/(\d{1,2}):(\d{2})/i) : null;
+                if (match) {
+                  const hour = match[1].padStart(2, '0');
+                  const minutes = match[2];
+                  setPerson({ ...person, time: `${hour}:${minutes} ${ampm}` });
+                } else {
+                  setPerson({ ...person, time: `12:00 ${ampm}` });
+                }
+              }}
+              className="px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent bg-white"
+            >
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>
         </div>
         <div>
           <label className="block text-gray-700 font-semibold mb-2">Place of Birth (City) *</label>
-          <select
-            required
-            value={person.place}
-            onChange={(e) => setPerson({ ...person, place: e.target.value })}
-            className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-          >
-            <option value="">Select City</option>
-            {MAJOR_CITIES.map((city) => (
-              <option key={city} value={city}>
-                {city}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <input
+              type="text"
+              required
+              list={`city-list-${label.replace(/\s+/g, '-')}`}
+              value={person.place}
+              onChange={(e) => setPerson({ ...person, place: e.target.value })}
+              className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+              placeholder="Select or type city name"
+            />
+            <datalist id={`city-list-${label.replace(/\s+/g, '-')}`}>
+              {MAJOR_CITIES.map((city) => (
+                <option key={city} value={city} />
+              ))}
+            </datalist>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Select from list or type your city name</p>
         </div>
         <div>
           <label className="block text-gray-700 font-semibold mb-2">Gender (Optional)</label>
