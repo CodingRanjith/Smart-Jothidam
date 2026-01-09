@@ -315,31 +315,64 @@ const InputForm = ({ onSubmit, isCouple = false, initialData }: InputFormProps) 
         <div>
           <label className="block text-gray-700 font-semibold mb-2">Time of Birth *</label>
           <div className="flex gap-2 items-start">
-            <div className="flex-1 flex gap-2">
+            <div className="flex-1 relative">
               <input
-                type="number"
+                type="text"
                 required
-                min="1"
-                max="12"
-                placeholder="HH"
+                inputMode="numeric"
                 data-error={`${prefix}_time`}
-                value={person.time ? (() => {
-                  const match = person.time.match(/(\d{1,2}):/);
-                  return match ? match[1] : '';
-                })() : ''}
+                value={person.time || ''}
                 onChange={(e) => {
-                  const hour = e.target.value;
-                  const match = person.time ? person.time.match(/:(\d{2})\s*(AM|PM)/i) : null;
-                  const minutes = match ? match[1] : '00';
-                  const ampm = match ? match[2].toUpperCase() : 'AM';
-                  if (hour) {
-                    const hourNum = parseInt(hour, 10);
-                    if (hourNum >= 1 && hourNum <= 12) {
-                      setPerson({ ...person, time: `${hour.padStart(2, '0')}:${minutes} ${ampm}` });
+                  let value = e.target.value.toUpperCase().trim();
+                  
+                  // Remove any characters that aren't digits, colon, space, A, M, or P
+                  value = value.replace(/[^0-9: AMP]/g, '');
+                  
+                  // Auto-format: convert "1030" to "10:30"
+                  if (/^\d{3,4}$/.test(value)) {
+                    if (value.length === 3) {
+                      value = value.slice(0, 1) + ':' + value.slice(1);
+                    } else if (value.length === 4) {
+                      value = value.slice(0, 2) + ':' + value.slice(2);
+                    }
+                  }
+                  
+                  // Extract hour, minute, and AM/PM
+                  const timeMatch = value.match(/(\d{1,2}):?(\d{0,2})\s*([AP]?M?)?/i);
+                  
+                  if (timeMatch) {
+                    let hour = parseInt(timeMatch[1] || '12', 10);
+                    let minute = parseInt(timeMatch[2] || '0', 10);
+                    let ampm = timeMatch[3]?.toUpperCase() || '';
+                    
+                    // Validate hour (1-12)
+                    if (hour > 12) hour = 12;
+                    if (hour === 0) hour = 12;
+                    
+                    // Validate minute (0-59)
+                    if (minute > 59) minute = 59;
+                    if (isNaN(minute)) minute = 0;
+                    
+                    // Format hour and minute
+                    const hourStr = hour.toString().padStart(2, '0');
+                    const minuteStr = minute.toString().padStart(2, '0');
+                    
+                    // If we have complete time (HH:MM), add AM/PM if missing
+                    if (timeMatch[1] && timeMatch[2] && timeMatch[2].length === 2) {
+                      if (!ampm || (ampm !== 'AM' && ampm !== 'PM')) {
+                        // Default to AM if not specified
+                        ampm = person.time && person.time.includes('PM') ? 'PM' : 'AM';
+                      }
+                      setPerson({ ...person, time: `${hourStr}:${minuteStr} ${ampm}` });
+                    } else {
+                      // Partial input - keep as is for better UX
+                      setPerson({ ...person, time: value });
                     }
                   } else {
-                    setPerson({ ...person, time: `12:${minutes} ${ampm}` });
+                    // Keep partial input
+                    setPerson({ ...person, time: value });
                   }
+                  
                   // Clear error when user starts typing
                   if (errors[`${prefix}_time`]) {
                     const newErrors = { ...errors };
@@ -347,40 +380,48 @@ const InputForm = ({ onSubmit, isCouple = false, initialData }: InputFormProps) 
                     setErrors(newErrors);
                   }
                 }}
-                className={`w-full px-4 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 ${
-                  errors[`${prefix}_time`] 
-                    ? 'border-red-500 focus:ring-red-500' 
-                    : 'border-primary focus:ring-accent'
-                }`}
-              />
-              <span className="self-center text-gray-600 font-bold">:</span>
-              <input
-                type="number"
-                required
-                min="0"
-                max="59"
-                placeholder="MM"
-                value={person.time ? (() => {
-                  const match = person.time.match(/:(\d{2})/);
-                  return match ? match[1] : '';
-                })() : ''}
-                onChange={(e) => {
-                  const minutes = e.target.value.padStart(2, '0');
-                  const minutesNum = parseInt(minutes, 10);
-                  if (minutesNum >= 0 && minutesNum <= 59) {
-                    const match = person.time ? person.time.match(/(\d{1,2}):/i) : null;
-                    const hour = match ? match[1].padStart(2, '0') : '12';
-                    const ampmMatch = person.time ? person.time.match(/(AM|PM)/i) : null;
-                    const ampm = ampmMatch ? ampmMatch[1].toUpperCase() : 'AM';
-                    setPerson({ ...person, time: `${hour}:${minutes} ${ampm}` });
-                  }
-                  // Clear error when user starts typing
-                  if (errors[`${prefix}_time`]) {
-                    const newErrors = { ...errors };
-                    delete newErrors[`${prefix}_time`];
-                    setErrors(newErrors);
+                onBlur={(e) => {
+                  // Validate and format on blur
+                  const timeValue = person.time || '';
+                  const timeMatch = timeValue.match(/(\d{1,2}):?(\d{0,2})\s*([AP]?M?)?/i);
+                  
+                  if (timeMatch) {
+                    let hour = parseInt(timeMatch[1] || '12', 10);
+                    let minute = parseInt(timeMatch[2] || '0', 10);
+                    let ampm = timeMatch[3]?.toUpperCase() || 'AM';
+                    
+                    // Fix hour
+                    if (hour > 12) hour = 12;
+                    if (hour === 0) hour = 12;
+                    if (isNaN(hour)) hour = 12;
+                    
+                    // Fix minute
+                    if (minute > 59) minute = 59;
+                    if (isNaN(minute)) minute = 0;
+                    
+                    // Ensure AM/PM
+                    if (ampm !== 'AM' && ampm !== 'PM') {
+                      ampm = 'AM';
+                    }
+                    
+                    const hourStr = hour.toString().padStart(2, '0');
+                    const minuteStr = minute.toString().padStart(2, '0');
+                    
+                    setPerson({ ...person, time: `${hourStr}:${minuteStr} ${ampm}` });
+                  } else if (timeValue.trim()) {
+                    // If there's input but invalid format, try to fix it
+                    const numbers = timeValue.replace(/\D/g, '');
+                    if (numbers.length >= 3) {
+                      const h = parseInt(numbers.slice(0, 2), 10);
+                      const m = parseInt(numbers.slice(2, 4) || '0', 10);
+                      const hour = (h > 12 ? 12 : (h === 0 ? 12 : h));
+                      const minute = m > 59 ? 59 : m;
+                      const currentAmpm = person.time?.includes('PM') ? 'PM' : 'AM';
+                      setPerson({ ...person, time: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${currentAmpm}` });
+                    }
                   }
                 }}
+                placeholder="10:30 AM"
                 className={`w-full px-4 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 ${
                   errors[`${prefix}_time`] 
                     ? 'border-red-500 focus:ring-red-500' 
@@ -404,7 +445,7 @@ const InputForm = ({ onSubmit, isCouple = false, initialData }: InputFormProps) 
                 } else {
                   setPerson({ ...person, time: `12:00 ${ampm}` });
                 }
-                // Clear error when user starts typing
+                // Clear error when user changes AM/PM
                 if (errors[`${prefix}_time`]) {
                   const newErrors = { ...errors };
                   delete newErrors[`${prefix}_time`];
@@ -424,7 +465,7 @@ const InputForm = ({ onSubmit, isCouple = false, initialData }: InputFormProps) 
           {errors[`${prefix}_time`] && (
             <p className="text-red-500 text-sm mt-1">{errors[`${prefix}_time`]}</p>
           )}
-          <p className="text-xs text-gray-500 mt-1">Format: HH:MM AM/PM (e.g., 10:30 AM)</p>
+          <p className="text-xs text-gray-500 mt-1">Type time like "10:30 AM" or "1030" (auto-formats)</p>
         </div>
         <div>
           <label className="block text-gray-700 font-semibold mb-2">Place of Birth (City) *</label>
