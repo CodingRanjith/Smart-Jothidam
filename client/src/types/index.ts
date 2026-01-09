@@ -9,6 +9,8 @@ export interface AstrologyDetails {
   dasaBalance?: string;
   rasiLord?: string;
   nakshatraLord?: string;
+  disclaimer?: string;
+  ayanamsa?: string;
 }
 
 export interface PredictionResult {

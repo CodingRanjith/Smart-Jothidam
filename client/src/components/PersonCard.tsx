@@ -11,6 +11,8 @@ interface PersonCardProps {
     dasaBalance?: string;
     rasiLord?: string;
     nakshatraLord?: string;
+    ayanamsa?: string;
+    disclaimer?: string;
   };
 }
 
@@ -26,6 +28,7 @@ const PersonCard = ({ name, details }: PersonCardProps) => {
     { label: 'Dasa Balance', value: details.dasaBalance },
     { label: 'Rasi Lord (அதிபதி)', value: details.rasiLord },
     { label: 'Nakshatra Lord', value: details.nakshatraLord },
+    { label: 'Ayanamsa', value: details.ayanamsa },
   ];
 
   return (
@@ -41,6 +44,11 @@ const PersonCard = ({ name, details }: PersonCardProps) => {
           </div>
         ))}
       </div>
+      {details.disclaimer && (
+        <div className="mt-4 pt-4 border-t-2 border-primary/30">
+          <p className="text-xs text-gray-600 italic">{details.disclaimer}</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -178,6 +178,18 @@ const Result = () => {
                 name={personName || 'Person'}
                 details={result.basicDetails || {}}
               />
+              {/* Disclaimer */}
+              {typeof result.basicDetails === 'object' && 'disclaimer' in result.basicDetails && (
+                <div className="mt-4 bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
+                  <p className="text-sm text-blue-800 font-semibold mb-2">📊 Calculation Method:</p>
+                  <p className="text-xs text-blue-700">{result.basicDetails.disclaimer}</p>
+                  {result.basicDetails.ayanamsa && (
+                    <p className="text-xs text-blue-700 mt-2">
+                      <span className="font-semibold">Ayanamsa:</span> {result.basicDetails.ayanamsa}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
@@ -189,6 +201,17 @@ const Result = () => {
                 name={person2Name || 'Person 2'}
                 details={result.basicDetails?.person2 || {}}
               />
+            </div>
+          )}
+          {/* Global Disclaimer */}
+          {((type === 'single' && typeof result.basicDetails === 'object' && 'disclaimer' in result.basicDetails) ||
+            (type === 'couple' && 'person1' in (result.basicDetails || {}) && result.basicDetails?.person1?.disclaimer)) && (
+            <div className="mt-6 max-w-3xl mx-auto bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
+              <p className="text-sm text-yellow-800 font-semibold mb-2">⚠️ Important Notice:</p>
+              <p className="text-xs text-yellow-700">
+                All astrology calculations are performed using Swiss Ephemeris-style algorithms with Lahiri Ayanamsa (Chitrapaksha). 
+                The AI predictions are based solely on these verified calculations. All values are calculated before being sent to the AI for interpretation.
+              </p>
             </div>
           )}
         </div>

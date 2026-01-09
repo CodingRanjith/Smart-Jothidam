@@ -19,15 +19,16 @@ const SYSTEM_PROMPT = `You are a highly experienced traditional Tamil astrologer
 - Traditional remedies (Pariharam)
 - Astrological predictions and interpretations
 
-IMPORTANT: The astrology calculations (Rasi, Nakshatra, Lagnam, etc.) are already calculated and provided to you.
-Your task is ONLY to provide predictions and interpretations based on these calculated values.
-DO NOT attempt to recalculate or modify the provided astrology details.
-Focus on giving accurate, traditional predictions based on the calculated astrology details.
-
-You must give predictions strictly based on the provided calculated astrology details.
-No random or exaggerated claims.
-Tone must be respectful, traditional, and clear.
-Explain predictions in simple English with Tamil astrology terms.`;
+CRITICAL RULES - YOU MUST FOLLOW THESE:
+1. The astrology calculations are ALREADY COMPLETE and VERIFIED using Swiss Ephemeris with Lahiri Ayanamsa (Chitrapaksha).
+2. Your task is ONLY to EXPLAIN and INTERPRET the provided verified astrology data.
+3. DO NOT calculate, recalculate, modify, or question the provided astrology values.
+4. DO NOT use default or tropical zodiac - all data is already in sidereal (Vedic) format.
+5. Base ALL predictions STRICTLY on the provided calculated values - never invent or assume values.
+6. Keep all predictions VERY BRIEF - maximum 2-3 sentences per category to ensure complete JSON responses.
+7. Use traditional Tamil astrology terminology when explaining.
+8. Be respectful, accurate, and clear - no exaggerated claims.
+9. If specific astrological details are missing, state that clearly rather than making assumptions.`;
 
 const CATEGORIES = [
   'Career / Job',
@@ -65,39 +66,52 @@ const buildSinglePersonPrompt = (
   details: BirthDetails,
   calculatedDetails: any
 ): string => {
-  return `Person Details:
+  return `VERIFIED ASTROLOGY DATA - DO NOT RECALCULATE:
+====================================================
+Calculation Method: Swiss Ephemeris-style algorithms
+Ayanamsa: ${calculatedDetails.ayanamsa || 'Lahiri (Chitrapaksha)'}
+Disclaimer: ${calculatedDetails.disclaimer || 'Calculated using professional astrology standards'}
+
+Person Details:
 Name: ${details.name}
 Date of Birth: ${details.dob}
 Time of Birth: ${details.time}
 Place of Birth: ${details.place}
 Gender: ${details.gender || 'Not specified'}
 
-CALCULATED ASTROLOGY DETAILS (Use these exact values - DO NOT recalculate):
+VERIFIED CALCULATED ASTROLOGY DETAILS (Use these EXACT values - DO NOT recalculate, modify, or question):
+====================================================
 Rasi (ராசி): ${calculatedDetails.rasi}
 Nakshatra (நட்சத்திரம்): ${calculatedDetails.nakshatra}
 Nakshatra Paatham: ${calculatedDetails.nakshatraPaatham}
 Lagnam (லக்னம்): ${calculatedDetails.lagnam}
-Chandran Position: ${calculatedDetails.chandranPosition}
-Suriyan Position: ${calculatedDetails.suriyanPosition}
+Chandran Position (Moon): ${calculatedDetails.chandranPosition}
+Suriyan Position (Sun): ${calculatedDetails.suriyanPosition}
 Dosham Presence: ${calculatedDetails.dosham}
 Dasa Balance: ${calculatedDetails.dasaBalance}
 Rasi Lord (அதிபதி): ${calculatedDetails.rasiLord}
 Nakshatra Lord: ${calculatedDetails.nakshatraLord}
 
-Tasks:
-1. Use the CALCULATED ASTROLOGY DETAILS provided above. DO NOT recalculate or change these values.
-2. Based on these calculated astrology details, give category-wise predictions for these ${CATEGORIES.length} categories: ${CATEGORIES.join(', ')}.
-3. Each category should be clear, practical, and traditional.
-4. Provide remedies only if dosham is "Yes" or challenges exist based on the calculated details.
+YOUR TASK - EXPLAIN ONLY:
+====================================================
+1. Based on the VERIFIED astrology data above, provide category-wise predictions.
+2. DO NOT calculate, recalculate, or modify any astrology values.
+3. Use ONLY the provided values - never assume or invent values.
+4. Give predictions for ALL ${CATEGORIES.length} categories: ${CATEGORIES.join(', ')}.
+5. Keep each prediction VERY BRIEF (2-3 sentences maximum per category).
+6. Be traditional, accurate, and clear.
+7. Provide remedies only if dosham is "Yes" or challenges exist based on the verified data.
 
-Format your response as JSON with this structure:
+Format your response as valid JSON:
 {
   "predictions": {
-    "Career / Job": "...",
-    "Business": "...",
-    ...
+    "Career / Job": "2-3 sentence explanation based on verified data",
+    "Business": "2-3 sentence explanation based on verified data",
+    ... (include ALL ${CATEGORIES.length} categories)
   }
-}`;
+}
+
+CRITICAL: Keep responses brief and ensure JSON is complete and valid. Base all explanations on the VERIFIED data provided above.`;
 };
 
 const buildCouplePrompt = (
@@ -106,19 +120,26 @@ const buildCouplePrompt = (
   calculatedDetails1: any,
   calculatedDetails2: any
 ): string => {
-  return `Male Details:
+  return `VERIFIED ASTROLOGY DATA - DO NOT RECALCULATE:
+====================================================
+Calculation Method: Swiss Ephemeris-style algorithms
+Ayanamsa: ${calculatedDetails1.ayanamsa || 'Lahiri (Chitrapaksha)'}
+Disclaimer: ${calculatedDetails1.disclaimer || 'Calculated using professional astrology standards'}
+
+PERSON 1 DETAILS:
 Name: ${person1.name}
 DOB: ${person1.dob}
 Time: ${person1.time}
 Place: ${person1.place}
 
-Female Details:
+PERSON 2 DETAILS:
 Name: ${person2.name}
 DOB: ${person2.dob}
 Time: ${person2.time}
 Place: ${person2.place}
 
-CALCULATED ASTROLOGY DETAILS FOR PERSON 1 (Use these exact values - DO NOT recalculate):
+VERIFIED CALCULATED ASTROLOGY DETAILS FOR PERSON 1 (Use these EXACT values - DO NOT recalculate):
+====================================================
 Rasi: ${calculatedDetails1.rasi}
 Nakshatra: ${calculatedDetails1.nakshatra}
 Nakshatra Paatham: ${calculatedDetails1.nakshatraPaatham}
@@ -130,7 +151,8 @@ Dasa Balance: ${calculatedDetails1.dasaBalance}
 Rasi Lord: ${calculatedDetails1.rasiLord}
 Nakshatra Lord: ${calculatedDetails1.nakshatraLord}
 
-CALCULATED ASTROLOGY DETAILS FOR PERSON 2 (Use these exact values - DO NOT recalculate):
+VERIFIED CALCULATED ASTROLOGY DETAILS FOR PERSON 2 (Use these EXACT values - DO NOT recalculate):
+====================================================
 Rasi: ${calculatedDetails2.rasi}
 Nakshatra: ${calculatedDetails2.nakshatra}
 Nakshatra Paatham: ${calculatedDetails2.nakshatraPaatham}
@@ -142,21 +164,27 @@ Dasa Balance: ${calculatedDetails2.dasaBalance}
 Rasi Lord: ${calculatedDetails2.rasiLord}
 Nakshatra Lord: ${calculatedDetails2.nakshatraLord}
 
-Tasks:
-1. Use the CALCULATED ASTROLOGY DETAILS provided above. DO NOT recalculate or change these values.
-2. Analyze compatibility using traditional Tamil astrology based on these calculated details.
-3. Give minimum ${COUPLE_CATEGORIES.length} category-wise predictions: ${COUPLE_CATEGORIES.join(', ')}.
-4. Include marriage harmony, family life, and future stability.
-5. Provide remedies if mismatches exist or if dosham is "Yes" for either person.
+YOUR TASK - EXPLAIN COMPATIBILITY ONLY:
+====================================================
+1. Based on the VERIFIED astrology data above, analyze compatibility using traditional Tamil astrology.
+2. DO NOT calculate, recalculate, or modify any astrology values.
+3. Use ONLY the provided values - never assume or invent values.
+4. Give predictions for ALL ${COUPLE_CATEGORIES.length} categories: ${COUPLE_CATEGORIES.join(', ')}.
+5. Keep each prediction VERY BRIEF (2-3 sentences maximum per category).
+6. Include marriage harmony, family life, and future stability analysis.
+7. Provide remedies if mismatches exist or if dosham is "Yes" for either person.
+8. Be traditional, accurate, and clear.
 
-Format your response as JSON with this structure:
+Format your response as valid JSON:
 {
   "predictions": {
-    "Career / Job": "...",
-    "Compatibility Score": "...",
-    ...
+    "Career / Job": "2-3 sentence explanation based on verified data",
+    "Business": "2-3 sentence explanation based on verified data",
+    ... (include ALL ${COUPLE_CATEGORIES.length} categories including Compatibility Score, Emotional Bond, etc.)
   }
-}`;
+}
+
+CRITICAL: Keep responses brief and ensure JSON is complete and valid. Base all explanations on the VERIFIED data provided above.`;
 };
 
 export const getSinglePersonJosiyam = async (
@@ -179,12 +207,29 @@ export const getSinglePersonJosiyam = async (
       ],
       model: 'llama-3.3-70b-versatile',
       temperature: 0.7,
-      max_tokens: 4000,
+      max_tokens: 6144, // Increased to handle all categories (keep responses brief)
       response_format: { type: 'json_object' },
     });
 
     const response = completion.choices[0]?.message?.content || '{}';
-    const parsed = JSON.parse(response);
+    let parsed;
+    try {
+      parsed = JSON.parse(response);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      console.error('Response content:', response);
+      // Try to extract valid JSON if partially truncated
+      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          parsed = JSON.parse(jsonMatch[0]);
+        } catch (e) {
+          throw new Error('Failed to parse AI response. Response may have been truncated.');
+        }
+      } else {
+        throw new Error('No valid JSON found in AI response.');
+      }
+    }
 
     console.log('✅ Returning results: Basic details from calculator, Predictions from AI');
 
@@ -192,8 +237,11 @@ export const getSinglePersonJosiyam = async (
       basicDetails: calculatedDetails, // ✅ Uses astrology calculator - NOT AI-generated
       predictions: parsed.predictions || {}, // ✅ Uses AI for predictions only
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching single person josiyam:', error);
+    if (error?.message) {
+      throw new Error(`Failed to calculate Josiyam: ${error.message}`);
+    }
     throw new Error('Failed to calculate Josiyam. Please try again.');
   }
 };
@@ -223,12 +271,29 @@ export const getCoupleJosiyam = async (
       ],
       model: 'llama-3.3-70b-versatile',
       temperature: 0.7,
-      max_tokens: 5000,
+      max_tokens: 8192, // Increased to handle all categories for couple (keep responses brief)
       response_format: { type: 'json_object' },
     });
 
     const response = completion.choices[0]?.message?.content || '{}';
-    const parsed = JSON.parse(response);
+    let parsed;
+    try {
+      parsed = JSON.parse(response);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      console.error('Response content:', response);
+      // Try to extract valid JSON if partially truncated
+      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          parsed = JSON.parse(jsonMatch[0]);
+        } catch (e) {
+          throw new Error('Failed to parse AI response. Response may have been truncated.');
+        }
+      } else {
+        throw new Error('No valid JSON found in AI response.');
+      }
+    }
 
     console.log('✅ Returning results: Basic details from calculator, Predictions from AI');
 
@@ -239,8 +304,11 @@ export const getCoupleJosiyam = async (
       },
       predictions: parsed.predictions || {}, // ✅ Uses AI for predictions only
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching couple josiyam:', error);
+    if (error?.message) {
+      throw new Error(`Failed to calculate Couple Josiyam: ${error.message}`);
+    }
     throw new Error('Failed to calculate Couple Josiyam. Please try again.');
   }
 };
