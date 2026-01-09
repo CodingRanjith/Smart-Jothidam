@@ -17,3 +17,8 @@ export interface PredictionResult {
   basicDetails: AstrologyDetails | { person1: AstrologyDetails; person2: AstrologyDetails };
   predictions: Record<string, string>;
 }
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}

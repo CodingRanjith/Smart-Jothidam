@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import PersonCard from '../components/PersonCard';
 import CategoryCard from '../components/CategoryCard';
-import type { PredictionResult } from '../types';
+import type { PredictionResult, AstrologyDetails } from '../types';
 import type { BirthDetails } from '../components/InputForm';
 
 interface ResultState {
@@ -35,6 +35,16 @@ const Result = () => {
   }
 
   const { type, result, personName, person1Name, person2Name, birthDetails } = state;
+
+  // Type guard to check if basicDetails is for a couple
+  const isCoupleDetails = (details: typeof result.basicDetails): details is { person1: AstrologyDetails; person2: AstrologyDetails } => {
+    return details !== null && typeof details === 'object' && 'person1' in details;
+  };
+
+  // Type guard to check if basicDetails is for a single person
+  const isSingleDetails = (details: typeof result.basicDetails): details is AstrologyDetails => {
+    return details !== null && typeof details === 'object' && !('person1' in details);
+  };
 
   const handleEdit = () => {
     if (type === 'single' && birthDetails && 'name' in birthDetails) {
@@ -172,14 +182,14 @@ const Result = () => {
           <h2 className="text-3xl font-heading font-bold text-primary mb-6 text-center border-b-4 border-accent pb-3">
             Basic Astrology Details
           </h2>
-          {type === 'single' ? (
+          {type === 'single' && isSingleDetails(result.basicDetails) ? (
             <div className="max-w-2xl mx-auto">
               <PersonCard
                 name={personName || 'Person'}
                 details={result.basicDetails || {}}
               />
               {/* Disclaimer */}
-              {typeof result.basicDetails === 'object' && 'disclaimer' in result.basicDetails && (
+              {result.basicDetails && 'disclaimer' in result.basicDetails && (
                 <div className="mt-4 bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
                   <p className="text-sm text-blue-800 font-semibold mb-2">📊 Calculation Method:</p>
                   <p className="text-xs text-blue-700">{result.basicDetails.disclaimer}</p>
@@ -191,21 +201,21 @@ const Result = () => {
                 </div>
               )}
             </div>
-          ) : (
+          ) : type === 'couple' && isCoupleDetails(result.basicDetails) ? (
             <div className="grid md:grid-cols-2 gap-6">
               <PersonCard
                 name={person1Name || 'Person 1'}
-                details={result.basicDetails?.person1 || {}}
+                details={result.basicDetails.person1 || {}}
               />
               <PersonCard
                 name={person2Name || 'Person 2'}
-                details={result.basicDetails?.person2 || {}}
+                details={result.basicDetails.person2 || {}}
               />
             </div>
-          )}
+          ) : null}
           {/* Global Disclaimer */}
-          {((type === 'single' && typeof result.basicDetails === 'object' && 'disclaimer' in result.basicDetails) ||
-            (type === 'couple' && 'person1' in (result.basicDetails || {}) && result.basicDetails?.person1?.disclaimer)) && (
+          {((type === 'single' && isSingleDetails(result.basicDetails) && result.basicDetails?.disclaimer) ||
+            (type === 'couple' && isCoupleDetails(result.basicDetails) && result.basicDetails.person1?.disclaimer)) && (
             <div className="mt-6 max-w-3xl mx-auto bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
               <p className="text-sm text-yellow-800 font-semibold mb-2">⚠️ Important Notice:</p>
               <p className="text-xs text-yellow-700">
@@ -217,7 +227,7 @@ const Result = () => {
         </div>
 
         {/* Category-wise Predictions Section */}
-        <div>
+        <div className="mb-12">
           <h2 className="text-3xl font-heading font-bold text-primary mb-6 text-center border-b-4 border-accent pb-3">
             Category-wise Predictions
           </h2>
@@ -231,6 +241,7 @@ const Result = () => {
             ))}
           </div>
         </div>
+
 
         <div className="mt-12 text-center">
           <button

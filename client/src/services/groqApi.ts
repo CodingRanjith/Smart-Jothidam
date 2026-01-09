@@ -1,6 +1,6 @@
 import Groq from 'groq-sdk';
 import type { BirthDetails } from '../components/InputForm';
-import type { PredictionResult } from '../types';
+import type { PredictionResult, ChatMessage } from '../types';
 import { calculateAstrologyDetails } from './astrologyCalculator';
 
 // Version: 2.0 - Updated model and API key
@@ -310,5 +310,118 @@ export const getCoupleJosiyam = async (
       throw new Error(`Failed to calculate Couple Josiyam: ${error.message}`);
     }
     throw new Error('Failed to calculate Couple Josiyam. Please try again.');
+  }
+};
+
+const buildChatContextPrompt = (
+  type: 'single' | 'couple',
+  birthDetails: BirthDetails | { person1: BirthDetails; person2: BirthDetails },
+  result: PredictionResult
+): string => {
+  const isCouple = type === 'couple' && 'person1' in birthDetails;
+  
+  let contextPrompt = `You are a helpful Tamil astrology assistant. Answer questions based on the following verified astrology data:\n\n`;
+  
+  if (isCouple && 'person1' in birthDetails) {
+    const basicDetails = result.basicDetails as { person1: any; person2: any };
+    contextPrompt += `COUPLE JOSIYAM DATA:\n`;
+    contextPrompt += `\nPERSON 1:\n`;
+    contextPrompt += `Name: ${birthDetails.person1.name}\n`;
+    contextPrompt += `DOB: ${birthDetails.person1.dob}\n`;
+    contextPrompt += `Time: ${birthDetails.person1.time}\n`;
+    contextPrompt += `Place: ${birthDetails.person1.place}\n`;
+    contextPrompt += `Rasi: ${basicDetails.person1?.rasi || 'N/A'}\n`;
+    contextPrompt += `Nakshatra: ${basicDetails.person1?.nakshatra || 'N/A'}\n`;
+    contextPrompt += `Lagnam: ${basicDetails.person1?.lagnam || 'N/A'}\n`;
+    contextPrompt += `Dosham: ${basicDetails.person1?.dosham || 'N/A'}\n`;
+    
+    contextPrompt += `\nPERSON 2:\n`;
+    contextPrompt += `Name: ${birthDetails.person2.name}\n`;
+    contextPrompt += `DOB: ${birthDetails.person2.dob}\n`;
+    contextPrompt += `Time: ${birthDetails.person2.time}\n`;
+    contextPrompt += `Place: ${birthDetails.person2.place}\n`;
+    contextPrompt += `Rasi: ${basicDetails.person2?.rasi || 'N/A'}\n`;
+    contextPrompt += `Nakshatra: ${basicDetails.person2?.nakshatra || 'N/A'}\n`;
+    contextPrompt += `Lagnam: ${basicDetails.person2?.lagnam || 'N/A'}\n`;
+    contextPrompt += `Dosham: ${basicDetails.person2?.dosham || 'N/A'}\n`;
+  } else if (!isCouple && 'name' in birthDetails) {
+    const basicDetails = result.basicDetails as any;
+    contextPrompt += `SINGLE PERSON JOSIYAM DATA:\n`;
+    contextPrompt += `Name: ${birthDetails.name}\n`;
+    contextPrompt += `DOB: ${birthDetails.dob}\n`;
+    contextPrompt += `Time: ${birthDetails.time}\n`;
+    contextPrompt += `Place: ${birthDetails.place}\n`;
+    contextPrompt += `Rasi: ${basicDetails?.rasi || 'N/A'}\n`;
+    contextPrompt += `Nakshatra: ${basicDetails?.nakshatra || 'N/A'}\n`;
+    contextPrompt += `Nakshatra Paatham: ${basicDetails?.nakshatraPaatham || 'N/A'}\n`;
+    contextPrompt += `Lagnam: ${basicDetails?.lagnam || 'N/A'}\n`;
+    contextPrompt += `Chandran Position: ${basicDetails?.chandranPosition || 'N/A'}\n`;
+    contextPrompt += `Suriyan Position: ${basicDetails?.suriyanPosition || 'N/A'}\n`;
+    contextPrompt += `Dosham: ${basicDetails?.dosham || 'N/A'}\n`;
+    contextPrompt += `Dasa Balance: ${basicDetails?.dasaBalance || 'N/A'}\n`;
+    contextPrompt += `Rasi Lord: ${basicDetails?.rasiLord || 'N/A'}\n`;
+    contextPrompt += `Nakshatra Lord: ${basicDetails?.nakshatraLord || 'N/A'}\n`;
+  }
+  
+  contextPrompt += `\n\nPREDICTIONS:\n`;
+  Object.entries(result.predictions || {}).forEach(([category, content]) => {
+    contextPrompt += `${category}: ${content}\n`;
+  });
+  
+  contextPrompt += `\n\nINSTRUCTIONS:\n`;
+  contextPrompt += `- Answer questions based ONLY on the astrology data provided above\n`;
+  contextPrompt += `- Use traditional Tamil astrology terminology\n`;
+  contextPrompt += `- Be clear, concise, and helpful\n`;
+  contextPrompt += `- If asked about something not in the data, politely say you can only answer based on the provided astrology information\n`;
+  contextPrompt += `- Keep responses conversational and easy to understand\n`;
+  
+  return contextPrompt;
+};
+
+export const askQuestion = async (
+  question: string,
+  type: 'single' | 'couple',
+  birthDetails: BirthDetails | { person1: BirthDetails; person2: BirthDetails },
+  result: PredictionResult,
+  chatHistory: ChatMessage[] = []
+): Promise<string> => {
+  try {
+    const contextPrompt = buildChatContextPrompt(type, birthDetails, result);
+    
+    // Build messages array with system prompt, context, chat history, and current question
+    const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+      { 
+        role: 'system', 
+        content: SYSTEM_PROMPT + '\n\n' + contextPrompt 
+      }
+    ];
+    
+    // Add chat history (last 10 messages to avoid token limits)
+    const recentHistory = chatHistory.slice(-10);
+    recentHistory.forEach(msg => {
+      messages.push({
+        role: msg.role,
+        content: msg.content
+      });
+    });
+    
+    // Add current question
+    messages.push({
+      role: 'user',
+      content: question
+    });
+
+    const completion = await groq.chat.completions.create({
+      messages: messages as any,
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.7,
+      max_tokens: 1024,
+    });
+
+    const response = completion.choices[0]?.message?.content || 'I apologize, but I could not generate a response. Please try again.';
+    return response;
+  } catch (error: any) {
+    console.error('Error asking question:', error);
+    throw new Error(error?.message || 'Failed to get answer. Please try again.');
   }
 };
