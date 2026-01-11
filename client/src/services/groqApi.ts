@@ -26,6 +26,7 @@ const getSystemPrompt = (language?: string): string => {
 - Tamil Rasi system interpretation
 - Nakshatra meanings and influences
 - Dasa & Bhukti concepts
+
 - Traditional remedies (Pariharam)
 - Astrological predictions and interpretations
 
@@ -421,6 +422,50 @@ const buildChatContextPrompt = (
   contextPrompt += `- Keep responses conversational and easy to understand\n`;
   
   return contextPrompt;
+};
+
+// Simple question-answering function for daily horoscope (no context needed)
+export const askSimpleQuestion = async (
+  question: string,
+  language: string = 'English'
+): Promise<string> => {
+  try {
+    const isBilingual = language === 'Tamil + English';
+    const isTanglish = language === 'Tanglish';
+    
+    let languageInstruction = '';
+    if (language === 'Tamil') {
+      languageInstruction = 'Answer EXCLUSIVELY in Tamil language using Tamil script. Example: "வணிகம் நல்ல முடிவுகளை கொடுக்கும்."';
+    } else if (language === 'English') {
+      languageInstruction = 'Answer EXCLUSIVELY in English. Example: "Business will yield good results."';
+    } else if (isBilingual) {
+      languageInstruction = 'Answer in BOTH Tamil (first) and English (in parentheses). Example: "வணிகம் நல்ல முடிவுகளை கொடுக்கும் (Business will yield good results)."';
+    } else if (isTanglish) {
+      languageInstruction = 'Answer in Tanglish (mixed Tamil and English, commonly used in Tamil-speaking regions). Use Tamil script for Tamil words and English for English words naturally mixed. Example: "வணிகம் good results கிடைக்கும். Today is your lucky day."';
+    } else {
+      languageInstruction = 'Answer in English.';
+    }
+    
+    const systemPrompt = `You are an expert Tamil astrologer (Josiyar) with deep knowledge of traditional Tamil astrology.
+${languageInstruction}`;
+
+    const completion = await groq.chat.completions.create({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: question },
+      ],
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.7,
+      max_tokens: 4096,
+      response_format: { type: 'json_object' },
+    });
+
+    const response = completion.choices[0]?.message?.content || '{}';
+    return response;
+  } catch (error: any) {
+    console.error('Error asking simple question:', error);
+    throw new Error(error?.message || 'Failed to get answer. Please try again.');
+  }
 };
 
 export const askQuestion = async (

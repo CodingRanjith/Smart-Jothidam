@@ -7,6 +7,9 @@ import CoupleJosiyam from './pages/CoupleJosiyam';
 import Result from './pages/Result';
 import Calculator from './pages/Calculator';
 import Chat from './pages/Chat';
+import DailyHoroscope from './pages/DailyHoroscope';
+import DailyDosDonts from './pages/DailyDosDonts';
+import TamilCalendar from './pages/TamilCalendar';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
             <Route path="/result" element={<Result />} />
             <Route path="/calculator" element={<Calculator />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/daily-horoscope" element={<DailyHoroscope />} />
+            <Route path="/daily-dos-donts" element={<DailyDosDonts />} />
+            <Route path="/tamil-calendar" element={<TamilCalendar />} />
           </Routes>
         </main>
         <Footer />

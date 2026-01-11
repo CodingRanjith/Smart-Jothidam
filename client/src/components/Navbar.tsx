@@ -15,6 +15,15 @@ const Navbar = () => {
             <Link to="/chat" className="text-sm hover:text-accent transition-colors font-semibold">
               Chat
             </Link>
+            <Link to="/daily-horoscope" className="text-sm hover:text-accent transition-colors font-semibold">
+              Daily Horoscope
+            </Link>
+            <Link to="/daily-dos-donts" className="text-sm hover:text-accent transition-colors font-semibold">
+              Do's & Don'ts
+            </Link>
+            <Link to="/tamil-calendar" className="text-sm hover:text-accent transition-colors font-semibold">
+              Tamil Calendar
+            </Link>
             <p className="text-sm text-secondary italic hidden md:block">Traditional Tamil Astrology with Modern AI</p>
           </div>
         </div>

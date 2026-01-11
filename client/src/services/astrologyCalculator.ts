@@ -349,7 +349,7 @@ function tropicalToSidereal(tropicalLongitude: number, jd: number): number {
 }
 
 // Calculate Ascendant (Lagnam) using proper Local Sidereal Time
-function calculateLagnam(jd: number, lat: number, lon: number, localHours: number, localMinutes: number, localSeconds: number = 0): number {
+function calculateLagnam(jd: number, lat: number, lon: number): number {
   // Calculate Local Sidereal Time using the JD directly
   // This is more accurate than converting separately
   const T = (jd - 2451545.0) / 36525.0;
@@ -489,7 +489,7 @@ export const calculateAstrologyDetails = async (
     const sunLongitudeSidereal = tropicalToSidereal(sunLongitudeTropical, julianDay);
 
     // STEP 5: Calculate Lagnam (Ascendant) with proper LST (using corrected formula)
-    const lagnamLongitude = calculateLagnam(julianDay, lat, lon, hours, minutes, seconds);
+    const lagnamLongitude = calculateLagnam(julianDay, lat, lon);
 
     // STEP 6: Calculate Rasi and Nakshatra from sidereal positions
     const moonRasi = calculateRasi(moonLongitudeSidereal);

@@ -22,8 +22,6 @@ const Chat = ({ type, birthDetails, result }: ChatProps) => {
   };
 
   const language = getLanguage();
-  const isTamil = language === 'Tamil' || language === 'Tamil + English';
-  const isBilingual = language === 'Tamil + English';
 
   // Initial welcome message based on language
   const getWelcomeMessage = (): string => {
