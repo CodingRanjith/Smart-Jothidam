@@ -11,15 +11,70 @@ interface ChatProps {
 }
 
 const Chat = ({ type, birthDetails, result }: ChatProps) => {
+  // Get language preference from birthDetails
+  const getLanguage = (): string => {
+    if ('name' in birthDetails) {
+      return birthDetails.language || 'English';
+    } else if ('person1' in birthDetails) {
+      return birthDetails.person1.language || birthDetails.person2.language || 'English';
+    }
+    return 'English';
+  };
+
+  const language = getLanguage();
+  const isTamil = language === 'Tamil' || language === 'Tamil + English';
+  const isBilingual = language === 'Tamil + English';
+
+  // Initial welcome message based on language
+  const getWelcomeMessage = (): string => {
+    if (language === 'Tamil') {
+      return 'வணக்கம்! நான் உங்கள் ஜோதிட உதவியாளர். உங்கள் ஜோசியம் முடிவுகள் பற்றி ஏதேனும் கேள்விகளை கேட்கலாம். உதாரணமாக, உங்கள் தொழில், திருமணம், உடல்நிலை, பரிகாரங்கள் அல்லது உங்கள் கணிப்புகளில் எந்தவொரு வகையைப் பற்றியும் கேட்கலாம்.';
+    } else if (language === 'Tamil + English') {
+      return 'வணக்கம்! (Hello!) நான் உங்கள் ஜோதிட உதவியாளர் (I am your astrology assistant). உங்கள் ஜோசியம் முடிவுகள் பற்றி ஏதேனும் கேள்விகளை கேட்கலாம் (Feel free to ask questions about your Josiyam results). உதாரணமாக, உங்கள் தொழில், திருமணம், உடல்நிலை, பரிகாரங்கள் பற்றி கேட்கலாம் (For example, you can ask about career, marriage, health, remedies).';
+    } else {
+      return 'Hello! I\'m your astrology assistant. Feel free to ask me any questions about your Josiyam results. For example, you can ask about your career, marriage, health, remedies, or any specific category from your predictions.';
+    }
+  };
+
+  // Suggested questions based on language
+  const getSuggestedQuestions = (): string[] => {
+    if (language === 'Tamil') {
+      return [
+        'எனது தொழில் வாய்ப்புகளைப் பற்றி மேலும் சொல்லுங்கள்',
+        'நீங்கள் பரிகாரங்கள் பரிந்துரைக்கிறீர்களா?',
+        'எனது ராசி மற்றும் நட்சத்திரத்தை விளக்குங்கள்',
+        'எனது தாசா இருப்பு என்ன அர்த்தம்?',
+        'எனது ஆரோக்கிய கணிப்பு எப்படி?',
+      ];
+    } else if (language === 'Tamil + English') {
+      return [
+        'எனது தொழில் வாய்ப்புகளைப் பற்றி மேலும் சொல்லுங்கள் (Tell me more about my career prospects)',
+        'நீங்கள் பரிகாரங்கள் பரிந்துரைக்கிறீர்களா? (What remedies do you recommend?)',
+        'எனது ராசி மற்றும் நட்சத்திரத்தை விளக்குங்கள் (Explain my Rasi and Nakshatra)',
+        'எனது தாசா இருப்பு என்ன அர்த்தம்? (What does my Dasa Balance mean?)',
+        'எனது ஆரோக்கிய கணிப்பு எப்படி? (How is my health prediction?)',
+      ];
+    } else {
+      return [
+        'Tell me more about my career prospects',
+        'What remedies do you recommend?',
+        'Explain my Rasi and Nakshatra',
+        'What does my Dasa Balance mean?',
+        'How is my health prediction?',
+      ];
+    }
+  };
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Hello! I\'m your astrology assistant. Feel free to ask me any questions about your Josiyam results. For example, you can ask about your career, marriage, health, remedies, or any specific category from your predictions.',
+      content: getWelcomeMessage(),
     },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const suggestedQuestions = getSuggestedQuestions();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -58,11 +113,23 @@ const Chat = ({ type, birthDetails, result }: ChatProps) => {
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
+      let errorContent: string;
+      if (language === 'Tamil') {
+        errorContent = error instanceof Error 
+          ? `மன்னிக்கவும், பிழை ஏற்பட்டது: ${error.message}`
+          : 'மன்னிக்கவும், பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.';
+      } else if (language === 'Tamil + English') {
+        errorContent = error instanceof Error 
+          ? `மன்னிக்கவும், பிழை ஏற்பட்டது (Sorry, I encountered an error): ${error.message}`
+          : 'மன்னிக்கவும், பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும். (Sorry, I encountered an error. Please try again.)';
+      } else {
+        errorContent = error instanceof Error 
+          ? `Sorry, I encountered an error: ${error.message}` 
+          : 'Sorry, I encountered an error. Please try again.';
+      }
       const errorMessage: ChatMessage = {
         role: 'assistant',
-        content: error instanceof Error 
-          ? `Sorry, I encountered an error: ${error.message}` 
-          : 'Sorry, I encountered an error. Please try again.',
+        content: errorContent,
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -70,19 +137,24 @@ const Chat = ({ type, birthDetails, result }: ChatProps) => {
     }
   };
 
-  const suggestedQuestions = [
-    'Tell me more about my career prospects',
-    'What remedies do you recommend?',
-    'Explain my Rasi and Nakshatra',
-    'What does my Dasa Balance mean?',
-    'How is my health prediction?',
-  ];
 
   return (
     <div className="bg-secondary border-2 border-primary rounded-xl shadow-lg overflow-hidden flex flex-col" style={{ height: '600px' }}>
       <div className="bg-primary text-white px-6 py-4 border-b-2 border-accent">
-        <h3 className="text-xl font-heading font-bold">Ask Questions About Your Josiyam</h3>
-        <p className="text-sm mt-1 opacity-90">Get detailed explanations and clarifications</p>
+        <h3 className="text-xl font-heading font-bold">
+          {language === 'Tamil' 
+            ? 'உங்கள் ஜோசியம் பற்றி கேள்விகளை கேட்கவும்'
+            : language === 'Tamil + English'
+            ? 'உங்கள் ஜோசியம் பற்றி கேள்விகளை கேட்கவும் (Ask Questions About Your Josiyam)'
+            : 'Ask Questions About Your Josiyam'}
+        </h3>
+        <p className="text-sm mt-1 opacity-90">
+          {language === 'Tamil' 
+            ? 'விளக்கங்கள் மற்றும் தெளிவுபடுத்தல்களைப் பெறுங்கள்'
+            : language === 'Tamil + English'
+            ? 'விளக்கங்கள் மற்றும் தெளிவுபடுத்தல்களைப் பெறுங்கள் (Get detailed explanations and clarifications)'
+            : 'Get detailed explanations and clarifications'}
+        </p>
       </div>
 
       {/* Messages Area */}
@@ -120,7 +192,13 @@ const Chat = ({ type, birthDetails, result }: ChatProps) => {
       {/* Suggested Questions */}
       {messages.length === 1 && (
         <div className="px-4 py-2 bg-gray-50 border-t border-primary/20">
-          <p className="text-xs text-gray-600 mb-2 font-semibold">Suggested questions:</p>
+          <p className="text-xs text-gray-600 mb-2 font-semibold">
+            {language === 'Tamil' 
+              ? 'பரிந்துரைக்கப்பட்ட கேள்விகள்:'
+              : language === 'Tamil + English'
+              ? 'பரிந்துரைக்கப்பட்ட கேள்விகள் (Suggested questions):'
+              : 'Suggested questions:'}
+          </p>
           <div className="flex flex-wrap gap-2">
             {suggestedQuestions.map((question, index) => (
               <button
@@ -142,7 +220,13 @@ const Chat = ({ type, birthDetails, result }: ChatProps) => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask a question about your Josiyam..."
+            placeholder={
+              language === 'Tamil' 
+                ? 'உங்கள் ஜோசியம் பற்றி கேள்வி கேட்கவும்...'
+                : language === 'Tamil + English'
+                ? 'உங்கள் ஜோசியம் பற்றி கேள்வி கேட்கவும் (Ask a question about your Josiyam)...'
+                : 'Ask a question about your Josiyam...'
+            }
             className="flex-1 px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
             disabled={loading}
           />

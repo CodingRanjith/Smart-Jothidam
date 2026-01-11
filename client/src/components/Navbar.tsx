@@ -8,7 +8,15 @@ const Navbar = () => {
           <Link to="/" className="flex items-center space-x-2">
             <h1 className="text-2xl font-heading font-bold">Smart Josiyam AI</h1>
           </Link>
-          <p className="text-sm text-secondary italic">Traditional Tamil Astrology with Modern AI</p>
+          <div className="flex items-center space-x-6">
+            <Link to="/calculator" className="text-sm hover:text-accent transition-colors font-semibold">
+              Calculator
+            </Link>
+            <Link to="/chat" className="text-sm hover:text-accent transition-colors font-semibold">
+              Chat
+            </Link>
+            <p className="text-sm text-secondary italic hidden md:block">Traditional Tamil Astrology with Modern AI</p>
+          </div>
         </div>
       </div>
     </nav>

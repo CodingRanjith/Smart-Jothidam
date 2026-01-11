@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import SingleJosiyam from './pages/SingleJosiyam';
 import CoupleJosiyam from './pages/CoupleJosiyam';
 import Result from './pages/Result';
+import Calculator from './pages/Calculator';
+import Chat from './pages/Chat';
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
             <Route path="/single-josiyam" element={<SingleJosiyam />} />
             <Route path="/couple-josiyam" element={<CoupleJosiyam />} />
             <Route path="/result" element={<Result />} />
+            <Route path="/calculator" element={<Calculator />} />
+            <Route path="/chat" element={<Chat />} />
           </Routes>
         </main>
         <Footer />

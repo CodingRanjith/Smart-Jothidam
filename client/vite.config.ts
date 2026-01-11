@@ -18,5 +18,15 @@ export default defineConfig(({ mode }) => {
     define: {
       'import.meta.env.VITE_GROQ_API_KEY': JSON.stringify(env.VITE_GROQ_API_KEY || ''),
     },
+    // Configure for WASM files (Swiss Ephemeris)
+    server: {
+      fs: {
+        allow: ['..']
+      }
+    },
+    assetsInclude: ['**/*.wasm'],
+    optimizeDeps: {
+      exclude: ['swisseph-wasm']
+    }
   }
 })

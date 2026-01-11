@@ -12,7 +12,17 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true,
 });
 
-const SYSTEM_PROMPT = `You are a highly experienced traditional Tamil astrologer (Josiyar) with deep knowledge of:
+const getSystemPrompt = (language?: string): string => {
+  const isTamil = language === 'Tamil' || language === 'Tamil + English';
+  const isBilingual = language === 'Tamil + English';
+  
+  const languageInstruction = isTamil 
+    ? (isBilingual 
+      ? `OUTPUT LANGUAGE: Write predictions in BOTH Tamil and English. For each category, write in Tamil first, followed by English in parentheses. Use Tamil script (தமிழ்) for Tamil text.`
+      : `OUTPUT LANGUAGE: Write ALL predictions EXCLUSIVELY in Tamil language using Tamil script (தமிழ்). Do NOT use English. Use traditional Tamil terminology and Tamil astrology terms.`)
+    : `OUTPUT LANGUAGE: Write predictions in English. Use traditional Tamil astrology terminology when referring to astrological concepts.`;
+
+  return `You are a highly experienced traditional Tamil astrologer (Josiyar) with deep knowledge of:
 - Tamil Rasi system interpretation
 - Nakshatra meanings and influences
 - Dasa & Bhukti concepts
@@ -28,7 +38,12 @@ CRITICAL RULES - YOU MUST FOLLOW THESE:
 6. Keep all predictions VERY BRIEF - maximum 2-3 sentences per category to ensure complete JSON responses.
 7. Use traditional Tamil astrology terminology when explaining.
 8. Be respectful, accurate, and clear - no exaggerated claims.
-9. If specific astrological details are missing, state that clearly rather than making assumptions.`;
+9. If specific astrological details are missing, state that clearly rather than making assumptions.
+
+${languageInstruction}
+
+IMPORTANT: Ensure your response is valid JSON format with all category predictions included.`;
+};
 
 const CATEGORIES = [
   'Career / Job',
@@ -64,8 +79,16 @@ const COUPLE_CATEGORIES = [
 
 const buildSinglePersonPrompt = (
   details: BirthDetails,
-  calculatedDetails: any
+  calculatedDetails: any,
+  language?: string
 ): string => {
+  const isTamil = language === 'Tamil' || language === 'Tamil + English';
+  const languageNote = isTamil 
+    ? (language === 'Tamil + English' 
+      ? 'Write each prediction in TAMIL first, then English in parentheses. Example: "வணிகம் நல்ல முடிவுகளை கொடுக்கும் (Business will yield good results)."'
+      : 'Write ALL predictions EXCLUSIVELY in TAMIL language using Tamil script. Example: "வணிகம் நல்ல முடிவுகளை கொடுக்கும்."')
+    : 'Write predictions in English.';
+  
   return `VERIFIED ASTROLOGY DATA - DO NOT RECALCULATE:
 ====================================================
 Calculation Method: Swiss Ephemeris-style algorithms
@@ -101,25 +124,33 @@ YOUR TASK - EXPLAIN ONLY:
 5. Keep each prediction VERY BRIEF (2-3 sentences maximum per category).
 6. Be traditional, accurate, and clear.
 7. Provide remedies only if dosham is "Yes" or challenges exist based on the verified data.
+8. ${languageNote}
 
 Format your response as valid JSON:
 {
   "predictions": {
-    "Career / Job": "2-3 sentence explanation based on verified data",
-    "Business": "2-3 sentence explanation based on verified data",
+    "Career / Job": "2-3 sentence explanation based on verified data ${isTamil ? 'in Tamil' : 'in English'}",
+    "Business": "2-3 sentence explanation based on verified data ${isTamil ? 'in Tamil' : 'in English'}",
     ... (include ALL ${CATEGORIES.length} categories)
   }
 }
 
-CRITICAL: Keep responses brief and ensure JSON is complete and valid. Base all explanations on the VERIFIED data provided above.`;
+CRITICAL: Keep responses brief and ensure JSON is complete and valid. Base all explanations on the VERIFIED data provided above. ${isTamil ? 'Remember: Use Tamil script for Tamil text.' : ''}`;
 };
 
 const buildCouplePrompt = (
   person1: BirthDetails,
   person2: BirthDetails,
   calculatedDetails1: any,
-  calculatedDetails2: any
+  calculatedDetails2: any,
+  language?: string
 ): string => {
+  const isTamil = language === 'Tamil' || language === 'Tamil + English';
+  const languageNote = isTamil 
+    ? (language === 'Tamil + English' 
+      ? 'Write each prediction in TAMIL first, then English in parentheses. Example: "வணிகம் நல்ல முடிவுகளை கொடுக்கும் (Business will yield good results)."'
+      : 'Write ALL predictions EXCLUSIVELY in TAMIL language using Tamil script. Example: "வணிகம் நல்ல முடிவுகளை கொடுக்கும்."')
+    : 'Write predictions in English.';
   return `VERIFIED ASTROLOGY DATA - DO NOT RECALCULATE:
 ====================================================
 Calculation Method: Swiss Ephemeris-style algorithms
@@ -174,17 +205,18 @@ YOUR TASK - EXPLAIN COMPATIBILITY ONLY:
 6. Include marriage harmony, family life, and future stability analysis.
 7. Provide remedies if mismatches exist or if dosham is "Yes" for either person.
 8. Be traditional, accurate, and clear.
+9. ${languageNote}
 
 Format your response as valid JSON:
 {
   "predictions": {
-    "Career / Job": "2-3 sentence explanation based on verified data",
-    "Business": "2-3 sentence explanation based on verified data",
+    "Career / Job": "2-3 sentence explanation based on verified data ${isTamil ? 'in Tamil' : 'in English'}",
+    "Business": "2-3 sentence explanation based on verified data ${isTamil ? 'in Tamil' : 'in English'}",
     ... (include ALL ${COUPLE_CATEGORIES.length} categories including Compatibility Score, Emotional Bond, etc.)
   }
 }
 
-CRITICAL: Keep responses brief and ensure JSON is complete and valid. Base all explanations on the VERIFIED data provided above.`;
+CRITICAL: Keep responses brief and ensure JSON is complete and valid. Base all explanations on the VERIFIED data provided above. ${isTamil ? 'Remember: Use Tamil script for Tamil text.' : ''}`;
 };
 
 export const getSinglePersonJosiyam = async (
@@ -198,11 +230,13 @@ export const getSinglePersonJosiyam = async (
     
     // Then, get predictions from AI based on calculated details
     console.log('🤖 Getting predictions from AI based on calculated details...');
-    const userPrompt = buildSinglePersonPrompt(details, calculatedDetails);
+    const language = details.language || 'English';
+    const systemPrompt = getSystemPrompt(language);
+    const userPrompt = buildSinglePersonPrompt(details, calculatedDetails, language);
 
     const completion = await groq.chat.completions.create({
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
       model: 'llama-3.3-70b-versatile',
@@ -262,11 +296,13 @@ export const getCoupleJosiyam = async (
     
     // Then, get predictions from AI based on calculated details
     console.log('🤖 Getting predictions from AI based on calculated details...');
-    const userPrompt = buildCouplePrompt(person1, person2, calculatedDetails1, calculatedDetails2);
+    const language = person1.language || person2.language || 'English';
+    const systemPrompt = getSystemPrompt(language);
+    const userPrompt = buildCouplePrompt(person1, person2, calculatedDetails1, calculatedDetails2, language);
 
     const completion = await groq.chat.completions.create({
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
       model: 'llama-3.3-70b-versatile',
@@ -316,7 +352,8 @@ export const getCoupleJosiyam = async (
 const buildChatContextPrompt = (
   type: 'single' | 'couple',
   birthDetails: BirthDetails | { person1: BirthDetails; person2: BirthDetails },
-  result: PredictionResult
+  result: PredictionResult,
+  language?: string
 ): string => {
   const isCouple = type === 'couple' && 'person1' in birthDetails;
   
@@ -368,9 +405,17 @@ const buildChatContextPrompt = (
     contextPrompt += `${category}: ${content}\n`;
   });
   
+  const isTamil = language === 'Tamil' || language === 'Tamil + English';
+  const isBilingual = language === 'Tamil + English';
+  
   contextPrompt += `\n\nINSTRUCTIONS:\n`;
   contextPrompt += `- Answer questions based ONLY on the astrology data provided above\n`;
   contextPrompt += `- Use traditional Tamil astrology terminology\n`;
+  if (isTamil) {
+    contextPrompt += `- Answer questions ${isBilingual ? 'in BOTH Tamil and English (Tamil first, then English in parentheses)' : 'EXCLUSIVELY in Tamil language using Tamil script (தமிழ்)'}\n`;
+  } else {
+    contextPrompt += `- Answer questions in English\n`;
+  }
   contextPrompt += `- Be clear, concise, and helpful\n`;
   contextPrompt += `- If asked about something not in the data, politely say you can only answer based on the provided astrology information\n`;
   contextPrompt += `- Keep responses conversational and easy to understand\n`;
@@ -383,16 +428,19 @@ export const askQuestion = async (
   type: 'single' | 'couple',
   birthDetails: BirthDetails | { person1: BirthDetails; person2: BirthDetails },
   result: PredictionResult,
-  chatHistory: ChatMessage[] = []
+  chatHistory: ChatMessage[] = [],
+  language?: string
 ): Promise<string> => {
   try {
-    const contextPrompt = buildChatContextPrompt(type, birthDetails, result);
+    const lang = language || ('name' in birthDetails ? birthDetails.language : ('person1' in birthDetails ? birthDetails.person1.language : undefined)) || 'English';
+    const systemPrompt = getSystemPrompt(lang);
+    const contextPrompt = buildChatContextPrompt(type, birthDetails, result, lang);
     
     // Build messages array with system prompt, context, chat history, and current question
     const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
       { 
         role: 'system', 
-        content: SYSTEM_PROMPT + '\n\n' + contextPrompt 
+        content: systemPrompt + '\n\n' + contextPrompt 
       }
     ];
     

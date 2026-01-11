@@ -17,7 +17,7 @@ const Home = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-8">
           <Link
             to="/single-josiyam"
             className="bg-secondary border-4 border-primary rounded-xl p-8 shadow-lg hover:shadow-2xl transition-all hover:scale-105"
@@ -52,6 +52,47 @@ const Home = () => {
               </p>
               <button className="mt-6 bg-primary text-white px-8 py-3 rounded-lg font-heading font-bold hover:bg-primary/90 transition-colors">
                 Get Started
+              </button>
+            </div>
+          </Link>
+        </div>
+
+        {/* New Features Section */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+          <Link
+            to="/calculator"
+            className="bg-secondary border-4 border-accent rounded-xl p-8 shadow-lg hover:shadow-2xl transition-all hover:scale-105"
+          >
+            <div className="text-center">
+              <div className="text-6xl mb-4">🧮</div>
+              <h2 className="text-3xl font-heading font-bold text-primary mb-4">
+                Joshiyam Calculator
+              </h2>
+              <p className="text-gray-700 leading-relaxed">
+                Instant astrology calculations with AI explanations. 
+                Enter birth details and get immediate calculations with detailed AI-powered explanations.
+              </p>
+              <button className="mt-6 bg-accent text-white px-8 py-3 rounded-lg font-heading font-bold hover:bg-accent/90 transition-colors">
+                Try Calculator
+              </button>
+            </div>
+          </Link>
+
+          <Link
+            to="/chat"
+            className="bg-secondary border-4 border-accent rounded-xl p-8 shadow-lg hover:shadow-2xl transition-all hover:scale-105"
+          >
+            <div className="text-center">
+              <div className="text-6xl mb-4">💬</div>
+              <h2 className="text-3xl font-heading font-bold text-primary mb-4">
+                Astrology Chat
+              </h2>
+              <p className="text-gray-700 leading-relaxed">
+                Chat with AI about Tamil astrology. 
+                Ask questions about Rasi, Nakshatra, Dasa, remedies, and any astrology-related topics.
+              </p>
+              <button className="mt-6 bg-accent text-white px-8 py-3 rounded-lg font-heading font-bold hover:bg-accent/90 transition-colors">
+                Start Chatting
               </button>
             </div>
           </Link>

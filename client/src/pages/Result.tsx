@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import PersonCard from '../components/PersonCard';
 import CategoryCard from '../components/CategoryCard';
+import Chat from '../components/Chat';
 import type { PredictionResult, AstrologyDetails } from '../types';
 import type { BirthDetails } from '../components/InputForm';
 
@@ -242,6 +243,19 @@ const Result = () => {
           </div>
         </div>
 
+        {/* Chat Section */}
+        {birthDetails && (
+          <div className="mb-12">
+            <h2 className="text-3xl font-heading font-bold text-primary mb-6 text-center border-b-4 border-accent pb-3">
+              Ask Questions About Your Results
+            </h2>
+            <Chat
+              type={type}
+              birthDetails={birthDetails}
+              result={result}
+            />
+          </div>
+        )}
 
         <div className="mt-12 text-center">
           <button
