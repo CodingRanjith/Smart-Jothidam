@@ -158,12 +158,22 @@ const NAKSHATRA_GOTHRAM_TAMIL = ['பரத்வாஜ', 'பரத்வாஜ
 const RASI_BHUTHAM = ['Fire', 'Earth', 'Air', 'Water', 'Fire', 'Earth', 'Air', 'Water', 'Fire', 'Earth', 'Air', 'Water'];
 const RASI_BHUTHAM_TAMIL = ['நெருப்பு', 'பூமி', 'காற்று', 'நீர்', 'நெருப்பு', 'பூமி', 'காற்று', 'நீர்', 'நெருப்பு', 'பூமி', 'காற்று', 'நீர்'];
 
+// Timezone offset in hours from UTC (e.g. IST = +5.5)
+const TZ_OFFSET_HOURS: Record<string, number> = {
+  'Asia/Kolkata': 5.5,
+  'Asia/Colombo': 5.5,
+  'Asia/Dubai': 4,
+  'America/New_York': -5,
+  'Europe/London': 0,
+};
+
 // Get city coordinates (latitude, longitude, timezone)
-function getCityCoordinates(place: string): { lat: number; lon: number; tz: string } {
+function getCityCoordinates(place: string): { lat: number; lon: number; tz: string; offsetHours: number } {
   // Default coordinates (Chennai, India) - IST (UTC+5:30)
   let lat = 13.0827;
   let lon = 80.2707;
   let tz = 'Asia/Kolkata';
+  let offsetHours = 5.5;
   
   // Extended city coordinates database
   const cityMap: { [key: string]: { lat: number; lon: number; tz: string } } = {
@@ -236,21 +246,19 @@ function getCityCoordinates(place: string): { lat: number; lon: number; tz: stri
   const placeLower = place.trim().toLowerCase();
   for (const [city, coords] of Object.entries(cityMap)) {
     if (placeLower.includes(city.toLowerCase()) || city.toLowerCase().includes(placeLower)) {
-      return coords;
+      const off = TZ_OFFSET_HOURS[coords.tz] ?? 5.5;
+      return { ...coords, offsetHours: off };
     }
   }
   
-  return { lat, lon, tz };
+  offsetHours = TZ_OFFSET_HOURS[tz] ?? 5.5;
+  return { lat, lon, tz, offsetHours };
 }
 
-// Convert local time (IST) to UTC
-// IST is UTC+5:30
-function convertLocalTimeToUTC(localHours: number, localMinutes: number, localSeconds: number, _timezone: string): { utcHours: number; utcMinutes: number; utcSeconds: number; utcDay: number; utcMonth: number; utcYear: number; day: number; month: number; year: number } {
-  // For Indian cities, IST offset is +5:30 hours
-  // This is a simplified conversion - in production, use proper timezone library
-  const istOffsetHours = 5.5;
-  
-  let utcHoursDecimal = (localHours + localMinutes / 60 + localSeconds / 3600) - istOffsetHours;
+// Convert local time (birth place) to UTC using place's timezone offset
+function convertLocalTimeToUTC(localHours: number, localMinutes: number, localSeconds: number, offsetHours: number): { utcHours: number; utcMinutes: number; utcSeconds: number; utcDay: number; utcMonth: number; utcYear: number; day: number; month: number; year: number } {
+  // Local time = UTC + offset, so UTC = Local - offset
+  let utcHoursDecimal = (localHours + localMinutes / 60 + localSeconds / 3600) - offsetHours;
   
   // Handle day rollover
   let dayOffset = 0;
@@ -438,63 +446,38 @@ function tropicalToSidereal(tropicalLongitude: number, jd: number): number {
 }
 
 // Calculate Ascendant (Lagnam) using proper Local Sidereal Time
+// Reference: λ_Asc = arctan(-cos(LST) / (sin(LST)cos(ε) + tan(φ)sin(ε)))
 function calculateLagnam(jd: number, lat: number, lon: number): number {
-  // Calculate Local Sidereal Time using the JD directly
-  // This is more accurate than converting separately
-  const T = (jd - 2451545.0) / 36525.0;
-  
-  // Calculate Julian Day Number at 0h UTC for the day
-  const jd0h = Math.floor(jd - 0.5) + 0.5; // JD at midnight UTC
-  
-  // Calculate days since J2000.0
-  const d = jd0h - 2451545.0;
-  
-  // Greenwich Mean Sidereal Time at 0h UTC (GMST0) in degrees
-  // Formula: θ₀ = 280.46061837° + 360.98564736629° * d + T² * 0.000387933° - T³ / 38710000
-  let theta0_0h = 280.46061837 + 360.98564736629 * d + 0.000387933 * T * T - (T * T * T) / 38710000;
-  // Normalize to 0-360
-  theta0_0h = theta0_0h % 360;
-  if (theta0_0h < 0) theta0_0h += 360;
-  
-  // Calculate UTC time from JD directly (more accurate)
-  // JD is already calculated with UTC, so extract UTC time from JD
-  const utcTimeFromJD = (jd - jd0h) * 24; // Hours since 0h UTC
-  
-  // Earth rotation per hour (degrees per hour of sidereal time)
-  const rotationPerHour = 360.98564736629 / 24;
-  
-  // Greenwich Sidereal Time at current UTC time
-  let gst = theta0_0h + utcTimeFromJD * rotationPerHour;
-  // Normalize to 0-360
+  const T = (jd - 2451545.0) / 36525.0; // Julian centuries since J2000.0
+
+  // Greenwich Mean Sidereal Time at given JD (degrees) - use full JD for accuracy
+  // GMST = 280.46061837 + 360.98564736629*(JD - 2451545.0) + 0.000387933*T² - T³/38710000
+  let gst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T - (T * T * T) / 38710000;
   gst = gst % 360;
   if (gst < 0) gst += 360;
 
-  // Local Sidereal Time = Greenwich Sidereal Time + longitude (in degrees)
-  // Longitude east (positive) means we add it to GST to get LST
+  // Local Sidereal Time = GMST + longitude (east positive)
   let lstDegrees = gst + lon;
-  // Normalize to 0-360
   lstDegrees = lstDegrees % 360;
   if (lstDegrees < 0) lstDegrees += 360;
-  
-  // Calculate obliquity of ecliptic
+
   const eps = 23.4392911 - 0.0130042 * T - 0.00000016 * T * T + 0.000000503 * T * T * T;
-  const epsRad = eps * Math.PI / 180;
-  const latRad = lat * Math.PI / 180;
-  const lstRad = lstDegrees * Math.PI / 180;
+  const epsRad = eps * (Math.PI / 180);
+  const latRad = lat * (Math.PI / 180);
+  const lstRad = lstDegrees * (Math.PI / 180);
 
-  // Ascendant longitude: tan(Asc) = (cos(eps)*sin(LST) + sin(eps)*tan(lat)*cos(LST)) / (cos(eps)*cos(LST) - sin(eps)*tan(lat)*sin(LST))
-  const y = Math.cos(epsRad) * Math.sin(lstRad) + Math.sin(epsRad) * Math.tan(latRad) * Math.cos(lstRad);
-  const x = Math.cos(epsRad) * Math.cos(lstRad) - Math.sin(epsRad) * Math.tan(latRad) * Math.sin(lstRad);
-  let ascendant = Math.atan2(y, x) * 180 / Math.PI;
-
-  // Normalize to 0-360 (atan2 returns -180 to +180, we want 0 to 360)
+  // Standard formula (Indian astrology / Wikipedia): λ_Asc = arctan(-cos(LST) / (sin(LST)cos(ε) + tan(φ)sin(ε)))
+  const numerator = -Math.cos(lstRad);
+  const denominator = Math.sin(lstRad) * Math.cos(epsRad) + Math.tan(latRad) * Math.sin(epsRad);
+  let ascendant = Math.atan2(numerator, denominator) * (180 / Math.PI);
   if (ascendant < 0) ascendant += 360;
-  
-  // Convert to sidereal (subtract Lahiri Ayanamsa)
+
+  // Convert tropical (sayana) to sidereal (nirayana) using Lahiri Ayanamsa
   const ayanamsa = calculateLahiriAyanamsa(jd);
   let siderealAscendant = ascendant - ayanamsa;
+  siderealAscendant = siderealAscendant % 360;
   if (siderealAscendant < 0) siderealAscendant += 360;
-  
+
   return siderealAscendant;
 }
 
@@ -527,10 +510,10 @@ export const calculateAstrologyDetails = async (
     );
 
     // Get city coordinates
-    const { lat, lon, tz } = getCityCoordinates(place);
+    const { lat, lon, offsetHours } = getCityCoordinates(place);
 
-    // STEP 1: Convert Local Time (IST) to UTC
-    const utcConv = convertLocalTimeToUTC(hours, minutes, seconds, tz);
+    // STEP 1: Convert local birth time to UTC using place's timezone offset
+    const utcConv = convertLocalTimeToUTC(hours, minutes, seconds, offsetHours);
     
     // Calculate UTC date (adjusting for timezone offset)
     let utcDay = day;
