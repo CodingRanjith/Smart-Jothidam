@@ -349,7 +349,7 @@ function getWeekday(year: number, month: number, day: number): number {
 }
 
 // Approximate Tamil solar date (Chithirai = Apr-May, month 1)
-function getTamilDateApprox(year: number, month: number, day: number): string {
+function getTamilDateApprox(_year: number, month: number, day: number): string {
   const tamilMonthIndex = (month + 7) % 12;
   const tamilMonth = TAMIL_MONTHS[tamilMonthIndex] || TAMIL_MONTHS[0];
   return `${tamilMonth} ${day}`;
@@ -647,10 +647,10 @@ export const calculateAstrologyDetails = async (
       weekday: WEEKDAY_ENGLISH[weekdayIndex],
       weekdayTamil: WEEKDAY_TAMIL[weekdayIndex],
       tamilDate: tamilDateStr,
-      tithi: `${TITHI_NAMES[tithiResult.index]} (${tithiResult.paksha})`,
+      tithi: `${TITHI_NAMES[tithiResult.index]} (${tithiResult.paksha}) / ${TITHI_TAMIL[tithiResult.index]} (${tithiResult.paksha === 'Shukla Paksha' ? 'சுக்ல பக்ஷா' : 'கிருஷ்ண பக்ஷா'})`,
       tithiPaksha: tithiResult.paksha,
-      yoga: YOGA_NAMES[yogaIndex],
-      karana: KARANA_NAMES[karanaIndex],
+      yoga: `${YOGA_NAMES[yogaIndex]} / ${YOGA_TAMIL[yogaIndex]}`,
+      karana: `${KARANA_NAMES[karanaIndex]} / ${KARANA_TAMIL[karanaIndex]}`,
       god: `${godStr} / ${godTamilStr}`,
       animalSign: `${animalStr} / ${animalTamilStr}`,
       tree: `${treeStr} / ${treeTamilStr}`,
