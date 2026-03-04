@@ -115,6 +115,49 @@ const NAKSHATRA_LORDS = [
   'சனி', 'சனி', 'கேது'
 ];
 
+// English names for bilingual display
+const RASI_ENGLISH = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+const NAKSHATRA_ENGLISH = ['Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra', 'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'Purva Phalguni', 'Uttara Phalguni', 'Hasta', 'Chitra', 'Swati', 'Vishakha', 'Anuradha', 'Jyeshtha', 'Mula', 'Purva Ashadha', 'Uttara Ashadha', 'Shravana', 'Dhanishta', 'Shatabhisha', 'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati'];
+const LORD_ENGLISH: Record<string, string> = { 'சுக்கிரன்': 'Venus', 'புதன்': 'Mercury', 'சந்திரன்': 'Moon', 'சூரியன்': 'Sun', 'செவ்வாய்': 'Mars', 'ராகு': 'Rahu', 'குரு': 'Jupiter', 'சனி': 'Saturn', 'கேது': 'Ketu' };
+
+// Tithi names (1-30), Paksha: 1-15 Shukla, 16-30 Krishna
+const TITHI_NAMES = ['Prathama', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami', 'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami', 'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Pournami', 'Prathama', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami', 'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami', 'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Amavasya'];
+const TITHI_TAMIL = ['பிரதமை', 'துவிதியை', 'திருதியை', 'சதுர்த்தி', 'பஞ்சமி', 'ஷஷ்டி', 'சப்தமி', 'அஷ்டமி', 'நவமி', 'தசமி', 'ஏகாதசி', 'துவாதசி', 'திரயோதசி', 'சதுர்த்தசி', 'பௌர்ணமி', 'பிரதமை', 'துவிதியை', 'திருதியை', 'சதுர்த்தி', 'பஞ்சமி', 'ஷஷ்டி', 'சப்தமி', 'அஷ்டமி', 'நவமி', 'தசமி', 'ஏகாதசி', 'துவாதசி', 'திரயோதசி', 'சதுர்த்தசி', 'அமாவாசை'];
+
+// Yoga names (27)
+const YOGA_NAMES = ['Vishkumbha', 'Priti', 'Ayushman', 'Saubhagya', 'Shobhana', 'Atiganda', 'Sukarma', 'Dhriti', 'Shula', 'Ganda', 'Vriddhi', 'Dhruva', 'Vyaghata', 'Harshana', 'Vajra', 'Siddhi', 'Vyatipata', 'Variyan', 'Parigha', 'Shiva', 'Siddha', 'Sadhya', 'Shubha', 'Shukla', 'Bramha', 'Indra', 'Vaidhriti'];
+const YOGA_TAMIL = ['விஷ்கும்பம்', 'பிரீதி', 'ஆயுஷ்மான்', 'சௌபாக்ய', 'சோபனம்', 'அதிகண்டம்', 'சுகர்மா', 'த்ருதி', 'சூலம்', 'கண்டம்', 'விருத்தி', 'த்ருவம்', 'வியாகடம்', 'ஹர்ஷணம்', 'வஜ்ரம்', 'சித்தி', 'வியதிபாதம்', 'வாரியான்', 'பரீகம்', 'சிவம்', 'சித்தம்', 'சாத்யம்', 'சுபம்', 'சுக்லம்', 'பிரம்மா', 'இந்திரம்', 'வைத்ருதி'];
+
+// Karana names (11 types, repeat in 60 half-tithis)
+const KARANA_NAMES = ['Bava', 'Balava', 'Kaulava', 'Taitila', 'Garija', 'Vanija', 'Visti', 'Shakuna', 'Chatushpada', 'Naga', 'Kimstughna'];
+const KARANA_TAMIL = ['பவ', 'பாலவ', 'கௌலவ', 'தைதில', 'கரிஜ', 'வணிஜ', 'விஷ்டி', 'சகுன', 'சதுஷ்பாத', 'நாக', 'கிம்ஸ்துக்ஞ'];
+
+// Weekday names
+const WEEKDAY_ENGLISH = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const WEEKDAY_TAMIL = ['ஞாயிறு', 'திங்கள்', 'செவ்வாய்', 'புதன்', 'வியாழன்', 'வெள்ளி', 'சனி'];
+
+// Tamil solar month names (Chithirai, Vaikasi, ... Aadi, etc.)
+const TAMIL_MONTHS = ['சித்திரை', 'வைகாசி', 'ஆனி', 'ஆடி', 'ஆவணி', 'புரட்டாசி', 'ஐப்பசி', 'கார்த்திகை', 'மார்கழி', 'தை', 'மாசி', 'பங்குனி'];
+
+// Nakshatra attributes (index 0-26): God, Animal, Tree, Ganam, Bird, Yoni, Gothram, Bhutham
+const NAKSHATRA_GOD = ['Ashwini Kumaras', 'Yama', 'Agni', 'Brahma', 'Chandra', 'Rudra', 'Aditi', 'Brihaspati', 'Sarpa', 'Pitrus', 'Bhaga', 'Aryaman', 'Savitha', 'Tvashtar', 'Vayu', 'Indragni', 'Mitra', 'Indra', 'Nirriti', 'Apah', 'Vishvedevas', 'Vishnu', 'Vasu', 'Varuna', 'Ajaikapad', 'Ahirbudhnya', 'Pushan'];
+const NAKSHATRA_GOD_TAMIL = ['அசுவினி குமாரர்கள்', 'யமன்', 'அக்னி', 'பிரம்மா', 'சந்திரன்', 'ருத்ரன்', 'அதிதி', 'பிரஹஸ்பதி', 'சர்ப்பம்', 'பித்ருக்கள்', 'பாகன்', 'அர்யமன்', 'சவிதா', 'த்வஷ்டா', 'வாயு', 'இந்திராக்னி', 'மித்ரன்', 'இந்திரன்', 'நிர்ருதி', 'அப்பு', 'விஷ்வேதேவர்கள்', 'விஷ்ணு', 'வசு', 'வருணன்', 'அஜைகபாத்', 'அஹிர்புத்ய்ய', 'பூஷன்'];
+const NAKSHATRA_ANIMAL = ['Horse', 'Elephant', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Rat', 'Rat', 'Cow', 'Buffalo', 'Tiger', 'Male Buffalo', 'Tiger', 'Deer', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Dog', 'Female Snake', 'Female Buffalo'];
+const NAKSHATRA_ANIMAL_TAMIL = ['குதிரை', 'யானை', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'எலி', 'எலி', 'பசு', 'எருமை', 'புலி', 'ஆண் எருமை', 'புலி', 'மான்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் நாய்', 'பெண் பாம்பு', 'பெண் எருமை'];
+const NAKSHATRA_TREE = ['Strychnine', 'Indian gooseberry', 'Fig', 'Jamun', 'Khadir', 'Black catechu', 'Bamboo', 'Peepal', 'Punnaga', 'Banyan', 'Palash', 'Jackfruit', 'Sandalwood', 'Bilva', 'Arjuna', 'Banyan', 'Bakula', 'Sala', 'Bamboo', 'Pipal', 'Jackfruit', 'Arjuna', 'Kadamba', 'Neem', 'Mango', 'Kadamba', 'Indian butter'];
+const NAKSHATRA_TREE_TAMIL = ['எட்டி', 'நெல்லி', 'அத்தி', 'நாவல்', 'கற்பூரவேங்கை', 'கருங்காலி', 'மூங்கில்', 'அரசு', 'புன்னாகம்', 'ஆலம்', 'பலாசு', 'பலா', 'சந்தனம்', 'வில்வம்', 'மருதம்', 'ஆலம்', 'இலுப்பை', 'சாலம்', 'மூங்கில்', 'அரசு', 'பலா', 'மருதம்', 'கடம்பு', 'வேப்பம்', 'மாம்பழம்', 'கடம்பு', 'இலுப்பை'];
+const NAKSHATRA_GANAM = ['Deva', 'Human', 'Rakshasa', 'Human', 'Human', 'Human', 'Deva', 'Deva', 'Rakshasa', 'Rakshasa', 'Human', 'Human', 'Rakshasa', 'Deva', 'Rakshasa', 'Rakshasa', 'Deva', 'Rakshasa', 'Rakshasa', 'Human', 'Human', 'Deva', 'Rakshasa', 'Rakshasa', 'Rakshasa', 'Deva', 'Deva'];
+const NAKSHATRA_GANAM_TAMIL = ['தேவ', 'மனித', 'ராட்சச', 'மனித', 'மனித', 'மனித', 'தேவ', 'தேவ', 'ராட்சச', 'ராட்சச', 'மனித', 'மனித', 'ராட்சச', 'தேவ', 'ராட்சச', 'ராட்சச', 'தேவ', 'ராட்சச', 'ராட்சச', 'மனித', 'மனித', 'தேவ', 'ராட்சச', 'ராட்சச', 'ராட்சச', 'தேவ', 'தேவ'];
+const NAKSHATRA_BIRD = ['Crow', 'Crow', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Owl', 'Owl', 'Cow', 'Buffalo', 'Pigeon', 'Male Buffalo', 'Male Cuckoo', 'Female Cuckoo', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Crow', 'Female Crow', 'Female Buffalo'];
+const NAKSHATRA_BIRD_TAMIL = ['காகம்', 'காகம்', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'ஆந்தை', 'ஆந்தை', 'பசு', 'எருமை', 'புறா', 'ஆண் குயில்', 'பெண் குயில்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் காகம்', 'பெண் காகம்', 'பெண் எருமை'];
+const NAKSHATRA_YONI = ['Horse', 'Elephant', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Rat', 'Rat', 'Cow', 'Buffalo', 'Tiger', 'Male Buffalo', 'Tiger', 'Deer', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Dog', 'Female Snake', 'Female Buffalo'];
+const NAKSHATRA_YONI_TAMIL = ['குதிரை', 'யானை', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'எலி', 'எலி', 'பசு', 'எருமை', 'புலி', 'ஆண் எருமை', 'புலி', 'மான்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் நாய்', 'பெண் பாம்பு', 'பெண் எருமை'];
+const NAKSHATRA_GOTHRAM = ['Bharadwaja', 'Bharadwaja', 'Bharadwaja', 'Atri', 'Atri', 'Atri', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Pulasthya', 'Pulasthya', 'Pulasthya', 'Pulasthya', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Bharadwaja'];
+const NAKSHATRA_GOTHRAM_TAMIL = ['பரத்வாஜ', 'பரத்வாஜ', 'பரத்வாஜ', 'அத்திரி', 'அத்திரி', 'அத்திரி', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'பரத்வாஜ'];
+// Bhutham (element) by Rasi: Mesha/Vrishabha=Earth, Mithuna/Kanya=Air, etc. Simplified: 0-2 Fire, 3-5 Water, 6-8 Air, 9-11 Earth (alternate)
+const RASI_BHUTHAM = ['Fire', 'Earth', 'Air', 'Water', 'Fire', 'Earth', 'Air', 'Water', 'Fire', 'Earth', 'Air', 'Water'];
+const RASI_BHUTHAM_TAMIL = ['நெருப்பு', 'பூமி', 'காற்று', 'நீர்', 'நெருப்பு', 'பூமி', 'காற்று', 'நீர்', 'நெருப்பு', 'பூமி', 'காற்று', 'நீர்'];
+
 // Get city coordinates (latitude, longitude, timezone)
 function getCityCoordinates(place: string): { lat: number; lon: number; tz: string } {
   // Default coordinates (Chennai, India) - IST (UTC+5:30)
@@ -274,6 +317,42 @@ function calculateLahiriAyanamsa(jd: number): number {
   const T = (jd - 2451545.0) / 36525.0; // Julian centuries since J2000.0
   const ayanamsa = 23.85 + 1.397 * T;
   return ayanamsa;
+}
+
+// Tithi from sidereal Moon-Sun (each tithi = 12°)
+function getTithi(moonLongitude: number, sunLongitude: number): { index: number; paksha: string } {
+  let diff = moonLongitude - sunLongitude;
+  if (diff < 0) diff += 360;
+  const tithiIndex = Math.floor(diff / 12) % 30; // 0-29
+  const paksha = tithiIndex < 15 ? 'Shukla Paksha' : 'Krishna Paksha';
+  return { index: tithiIndex, paksha };
+}
+
+// Yoga from (Moon + Sun) longitude, 27 yogas of 360/27°
+function getYoga(moonLongitude: number, sunLongitude: number): number {
+  const sum = ((moonLongitude + sunLongitude) % 360 + 360) % 360;
+  return Math.floor(sum / (360 / 27)) % 27;
+}
+
+// Karana: 60 half-tithis, 11 names repeat (each karana = 6°)
+function getKarana(moonLongitude: number, sunLongitude: number): number {
+  let diff = moonLongitude - sunLongitude;
+  if (diff < 0) diff += 360;
+  const halfTithi = Math.floor(diff / 6) % 60;
+  return halfTithi % 11;
+}
+
+// Weekday from Gregorian date (0=Sunday .. 6=Saturday)
+function getWeekday(year: number, month: number, day: number): number {
+  const d = new Date(year, month - 1, day);
+  return d.getDay();
+}
+
+// Approximate Tamil solar date (Chithirai = Apr-May, month 1)
+function getTamilDateApprox(year: number, month: number, day: number): string {
+  const tamilMonthIndex = (month + 7) % 12;
+  const tamilMonth = TAMIL_MONTHS[tamilMonthIndex] || TAMIL_MONTHS[0];
+  return `${tamilMonth} ${day}`;
 }
 
 // Calculate tropical longitude of Moon using improved ELP-2000 series
@@ -509,6 +588,37 @@ export const calculateAstrologyDetails = async (
     // STEP 8: Calculate Dasa Balance
     const dasaBalance = calculateDasaBalance(moonNakshatra.nakshatra, year, month, day);
 
+    // STEP 9: Panchangam - Tithi, Yoga, Karana (from sidereal longitudes)
+    const tithiResult = getTithi(moonLongitudeSidereal, sunLongitudeSidereal);
+    const yogaIndex = getYoga(moonLongitudeSidereal, sunLongitudeSidereal);
+    const karanaIndex = getKarana(moonLongitudeSidereal, sunLongitudeSidereal);
+
+    // STEP 10: Weekday and Tamil date
+    const weekdayIndex = getWeekday(year, month, day);
+    const tamilDateStr = getTamilDateApprox(year, month, day);
+
+    // Ascendant Lord = lord of Lagnam Rasi
+    const ascendantLordTamil = RASI_LORDS[lagnamRasi] || 'Unknown';
+
+    // Nakshatra attributes
+    const nIdx = moonNakshatra.nakshatra;
+    const godStr = NAKSHATRA_GOD[nIdx];
+    const godTamilStr = NAKSHATRA_GOD_TAMIL[nIdx];
+    const animalStr = NAKSHATRA_ANIMAL[nIdx];
+    const animalTamilStr = NAKSHATRA_ANIMAL_TAMIL[nIdx];
+    const treeStr = NAKSHATRA_TREE[nIdx];
+    const treeTamilStr = NAKSHATRA_TREE_TAMIL[nIdx];
+    const ganamStr = NAKSHATRA_GANAM[nIdx];
+    const ganamTamilStr = NAKSHATRA_GANAM_TAMIL[nIdx];
+    const birdStr = NAKSHATRA_BIRD[nIdx];
+    const birdTamilStr = NAKSHATRA_BIRD_TAMIL[nIdx];
+    const yoniStr = NAKSHATRA_YONI[nIdx];
+    const yoniTamilStr = NAKSHATRA_YONI_TAMIL[nIdx];
+    const gothramStr = NAKSHATRA_GOTHRAM[nIdx];
+    const gothramTamilStr = NAKSHATRA_GOTHRAM_TAMIL[nIdx];
+    const bhuthamStr = RASI_BHUTHAM[moonRasi];
+    const bhuthamTamilStr = RASI_BHUTHAM_TAMIL[moonRasi];
+
     // Validation: Ensure all critical data is present
     if (isNaN(moonLongitudeSidereal) || !ayanamsa || isNaN(lagnamLongitude)) {
       throw new Error('Astrology data incomplete. Calculation failed.');
@@ -516,17 +626,39 @@ export const calculateAstrologyDetails = async (
 
     return {
       rasi: TAMIL_RASI[moonRasi] || 'Unknown',
+      rasiEnglish: RASI_ENGLISH[moonRasi],
       nakshatra: TAMIL_NAKSHATRA[moonNakshatra.nakshatra] || 'Unknown',
+      nakshatraEnglish: NAKSHATRA_ENGLISH[moonNakshatra.nakshatra],
       nakshatraPaatham: `${moonNakshatra.paatham}/4`,
       lagnam: TAMIL_RASI[lagnamRasi] || 'Unknown',
+      lagnamEnglish: RASI_ENGLISH[lagnamRasi],
       chandranPosition: `${TAMIL_RASI[moonRasi]} (${Math.round(moonLongitudeSidereal % 30)}°)`,
       suriyanPosition: `${TAMIL_RASI[sunRasi]} (${Math.round(sunLongitudeSidereal % 30)}°)`,
       dosham: dosham ? 'Yes' : 'No',
       dasaBalance: dasaBalance,
       rasiLord: RASI_LORDS[moonRasi] || 'Unknown',
+      rasiLordEnglish: LORD_ENGLISH[RASI_LORDS[moonRasi] || ''] || RASI_LORDS[moonRasi],
       nakshatraLord: NAKSHATRA_LORDS[moonNakshatra.nakshatra] || 'Unknown',
+      nakshatraLordEnglish: LORD_ENGLISH[NAKSHATRA_LORDS[moonNakshatra.nakshatra] || ''] || NAKSHATRA_LORDS[moonNakshatra.nakshatra],
+      ascendantLord: ascendantLordTamil,
+      ascendantLordEnglish: LORD_ENGLISH[ascendantLordTamil] || ascendantLordTamil,
       disclaimer: 'Calculated using improved Swiss Ephemeris-style algorithms with Lahiri Ayanamsa (Chitrapaksha). All calculations verified using professional astrology standards.',
       ayanamsa: `Lahiri (${ayanamsa.toFixed(4)}°)`,
+      weekday: WEEKDAY_ENGLISH[weekdayIndex],
+      weekdayTamil: WEEKDAY_TAMIL[weekdayIndex],
+      tamilDate: tamilDateStr,
+      tithi: `${TITHI_NAMES[tithiResult.index]} (${tithiResult.paksha})`,
+      tithiPaksha: tithiResult.paksha,
+      yoga: YOGA_NAMES[yogaIndex],
+      karana: KARANA_NAMES[karanaIndex],
+      god: `${godStr} / ${godTamilStr}`,
+      animalSign: `${animalStr} / ${animalTamilStr}`,
+      tree: `${treeStr} / ${treeTamilStr}`,
+      ganam: `${ganamStr} (${ganamTamilStr})`,
+      bird: `${birdStr} / ${birdTamilStr}`,
+      yoni: `${yoniStr} / ${yoniTamilStr}`,
+      gothram: `${gothramStr} (${gothramTamilStr})`,
+      bhutham: `${bhuthamStr} (${bhuthamTamilStr})`,
     };
   } catch (error) {
     console.error('Error calculating astrology details:', error);

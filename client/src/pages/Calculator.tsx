@@ -3,6 +3,7 @@ import InputForm from '../components/InputForm';
 import type { BirthDetails } from '../components/InputForm';
 import Loader from '../components/Loader';
 import PersonCard from '../components/PersonCard';
+import ViewMoreDetails from '../components/ViewMoreDetails';
 import { calculateAstrologyDetails } from '../services/astrologyCalculator';
 import type { AstrologyDetails } from '../types';
 import { askQuestion } from '../services/groqApi';
@@ -141,6 +142,10 @@ const Calculator = () => {
                   Calculated Astrology Details
                 </h2>
                 <PersonCard
+                  name={birthDetails?.name || 'Person'}
+                  details={calculationResult}
+                />
+                <ViewMoreDetails
                   name={birthDetails?.name || 'Person'}
                   details={calculationResult}
                 />

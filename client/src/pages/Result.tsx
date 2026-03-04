@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PersonCard from '../components/PersonCard';
 import CategoryCard from '../components/CategoryCard';
 import Chat from '../components/Chat';
+import ViewMoreDetails from '../components/ViewMoreDetails';
 import type { PredictionResult, AstrologyDetails } from '../types';
 import type { BirthDetails } from '../components/InputForm';
 
@@ -184,8 +185,12 @@ const Result = () => {
             Basic Astrology Details
           </h2>
           {type === 'single' && isSingleDetails(result.basicDetails) ? (
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto space-y-4">
               <PersonCard
+                name={personName || 'Person'}
+                details={result.basicDetails || {}}
+              />
+              <ViewMoreDetails
                 name={personName || 'Person'}
                 details={result.basicDetails || {}}
               />
@@ -204,14 +209,26 @@ const Result = () => {
             </div>
           ) : type === 'couple' && isCoupleDetails(result.basicDetails) ? (
             <div className="grid md:grid-cols-2 gap-6">
-              <PersonCard
-                name={person1Name || 'Person 1'}
-                details={result.basicDetails.person1 || {}}
-              />
-              <PersonCard
-                name={person2Name || 'Person 2'}
-                details={result.basicDetails.person2 || {}}
-              />
+              <div className="space-y-4">
+                <PersonCard
+                  name={person1Name || 'Person 1'}
+                  details={result.basicDetails.person1 || {}}
+                />
+                <ViewMoreDetails
+                  name={person1Name || 'Person 1'}
+                  details={result.basicDetails.person1 || {}}
+                />
+              </div>
+              <div className="space-y-4">
+                <PersonCard
+                  name={person2Name || 'Person 2'}
+                  details={result.basicDetails.person2 || {}}
+                />
+                <ViewMoreDetails
+                  name={person2Name || 'Person 2'}
+                  details={result.basicDetails.person2 || {}}
+                />
+              </div>
             </div>
           ) : null}
           {/* Global Disclaimer */}
