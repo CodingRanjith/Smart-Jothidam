@@ -119,36 +119,29 @@ CRITICAL: All predictions must follow the language format specified above (${sel
       const response = await askSimpleQuestion(prompt, selectedLanguage);
       
       try {
-        // Try to parse as JSON
-        let predictions;
-        if (typeof response === 'string') {
-          // Extract JSON from response if it's wrapped in text
-          const jsonMatch = response.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            predictions = JSON.parse(jsonMatch[0]).predictions;
-          } else {
-            throw new Error('No JSON found in response');
-          }
-        } else {
-          predictions = response.predictions || response;
-        }
+        // Try to parse as JSON (askSimpleQuestion returns a string)
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]) as { predictions?: { [key: string]: string } } | { [key: string]: string };
+          const predictions: { [key: string]: string } = 'predictions' in parsed && typeof parsed.predictions === 'object'
+            ? (parsed.predictions ?? {})
+            : (parsed as { [key: string]: string });
 
-        setResult({
-          date: formattedDate,
-          rasi: selectedRasi,
-          language: selectedLanguage,
-          predictions: predictions || {}
-        });
+          setResult({
+            date: formattedDate,
+            rasi: selectedRasi,
+            language: selectedLanguage,
+            predictions: predictions || {}
+          });
+        } else {
+          throw new Error('No JSON found in response');
+        }
       } catch (parseError) {
         // If JSON parsing fails, create a structured response
         const predictions: { [key: string]: string } = {};
         DAILY_CATEGORIES.forEach((category, index) => {
-          if (typeof response === 'string') {
-            const lines = response.split('\n').filter(line => line.trim());
-            predictions[category] = lines[index] || `${category}: ${response.substring(0, 100)}...`;
-          } else {
-            predictions[category] = (response as any)[category] || 'Prediction not available';
-          }
+          const lines = response.split('\n').filter(line => line.trim());
+          predictions[category] = lines[index] || `${category}: ${response.substring(0, 100)}...`;
         });
         setResult({
           date: formattedDate,
