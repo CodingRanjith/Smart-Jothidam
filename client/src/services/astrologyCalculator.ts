@@ -237,36 +237,42 @@ function convertLocalTimeToUTC(localHours: number, localMinutes: number, localSe
   };
 }
 
-// Calculate Julian Day from UTC date/time
+// Calculate Julian Day from UTC date/time (USNO convention: JD at midnight = .5)
 function calculateJulianDayUTC(year: number, month: number, day: number, hours: number, minutes: number, seconds: number = 0): number {
   const a = Math.floor((14 - month) / 12);
   const y = year + 4800 - a;
   const m = month + 12 * a - 3;
   const jdn = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
-  return jdn + (hours + minutes / 60 + seconds / 3600) / 24;
+  const utHours = hours + minutes / 60 + seconds / 3600;
+  return jdn - 0.5 + utHours / 24;
 }
 
-// Calculate Rasi from sidereal longitude (0-360 degrees)
+// Calculate Rasi from sidereal longitude (0-360 degrees), index 0-11
 const calculateRasi = (siderealLongitude: number): number => {
-  return Math.floor(siderealLongitude / 30);
+  const norm = ((siderealLongitude % 360) + 360) % 360;
+  const idx = Math.floor(norm / 30);
+  return idx === 12 ? 0 : idx;
 };
 
-// Calculate Nakshatra from sidereal longitude (0-360 degrees)
+// Calculate Nakshatra from sidereal longitude (0-360 degrees), index 0-26, paatham 1-4
 const calculateNakshatra = (siderealLongitude: number): { nakshatra: number; paatham: number } => {
-  const nakshatra = Math.floor(siderealLongitude / (360 / 27));
-  const remainder = siderealLongitude % (360 / 27);
-  const paatham = Math.floor(remainder / (360 / 27 / 4)) + 1;
+  const norm = ((siderealLongitude % 360) + 360) % 360;
+  const step = 360 / 27;
+  let nakshatra = Math.floor(norm / step);
+  if (nakshatra >= 27) nakshatra = 26;
+  const remainder = norm % step;
+  const padaStep = step / 4;
+  let paatham = Math.floor(remainder / padaStep) + 1;
+  if (paatham < 1) paatham = 1;
+  if (paatham > 4) paatham = 4;
   return { nakshatra, paatham };
 };
 
 // Calculate Lahiri Ayanamsa (Chitrapaksha) - MANDATORY for Vedic astrology
-// Updated formula based on Lahiri Ayanamsa standard calculation
+// Standard formula: ~23.85° at J2000, rate ~50.27"/year ≈ 1.397° per Julian century
 function calculateLahiriAyanamsa(jd: number): number {
-  const T = (jd - 2451545.0) / 36525.0;
-  // Lahiri Ayanamsa formula (Chitrapaksha) - Updated for accuracy
-  // Formula: 50.23884750° + (T * 0.00011197°) + (T^2 * 0.000000006°)
-  // For year 2003, this should give approximately 50.2388°
-  const ayanamsa = 50.23884750 + (T * 0.00011197) + (T * T * 0.000000006);
+  const T = (jd - 2451545.0) / 36525.0; // Julian centuries since J2000.0
+  const ayanamsa = 23.85 + 1.397 * T;
   return ayanamsa;
 }
 
