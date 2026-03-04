@@ -140,20 +140,20 @@ const WEEKDAY_TAMIL = ['ஞாயிறு', 'திங்கள்', 'செவ
 const TAMIL_MONTHS = ['சித்திரை', 'வைகாசி', 'ஆனி', 'ஆடி', 'ஆவணி', 'புரட்டாசி', 'ஐப்பசி', 'கார்த்திகை', 'மார்கழி', 'தை', 'மாசி', 'பங்குனி'];
 
 // Nakshatra attributes (index 0-26): God, Animal, Tree, Ganam, Bird, Yoni, Gothram, Bhutham
-const NAKSHATRA_GOD = ['Ashwini Kumaras', 'Yama', 'Agni', 'Brahma', 'Chandra', 'Rudra', 'Aditi', 'Brihaspati', 'Sarpa', 'Pitrus', 'Bhaga', 'Aryaman', 'Savitha', 'Tvashtar', 'Vayu', 'Indragni', 'Mitra', 'Indra', 'Nirriti', 'Apah', 'Vishvedevas', 'Vishnu', 'Vasu', 'Varuna', 'Ajaikapad', 'Ahirbudhnya', 'Pushan'];
-const NAKSHATRA_GOD_TAMIL = ['அசுவினி குமாரர்கள்', 'யமன்', 'அக்னி', 'பிரம்மா', 'சந்திரன்', 'ருத்ரன்', 'அதிதி', 'பிரஹஸ்பதி', 'சர்ப்பம்', 'பித்ருக்கள்', 'பாகன்', 'அர்யமன்', 'சவிதா', 'த்வஷ்டா', 'வாயு', 'இந்திராக்னி', 'மித்ரன்', 'இந்திரன்', 'நிர்ருதி', 'அப்பு', 'விஷ்வேதேவர்கள்', 'விஷ்ணு', 'வசு', 'வருணன்', 'அஜைகபாத்', 'அஹிர்புத்ய்ய', 'பூஷன்'];
+const NAKSHATRA_GOD = ['Ashwini Kumaras', 'Yama', 'Agni', 'Brahma', 'Chandra', 'Rudra', 'Aditi', 'Brihaspati', 'Sarpa', 'Pitrus', 'Bhaga', 'Aryaman', 'Savitha', 'Tvashtar, Vishwakarma', 'Vayu', 'Indragni', 'Mitra', 'Indra', 'Nirriti', 'Apah', 'Vishvedevas', 'Vishnu', 'Vasu', 'Varuna', 'Ajaikapad', 'Ahirbudhnya', 'Pushan'];
+const NAKSHATRA_GOD_TAMIL = ['அசுவினி குமாரர்கள்', 'யமன்', 'அக்னி', 'பிரம்மா', 'சந்திரன்', 'ருத்ரன்', 'அதிதி', 'பிரஹஸ்பதி', 'சர்ப்பம்', 'பித்ருக்கள்', 'பாகன்', 'அர்யமன்', 'சவிதா', 'த்வஷ்டா, விஸ்வகர்மா', 'வாயு', 'இந்திராக்னி', 'மித்ரன்', 'இந்திரன்', 'நிர்ருதி', 'அப்பு', 'விஷ்வேதேவர்கள்', 'விஷ்ணு', 'வசு', 'வருணன்', 'அஜைகபாத்', 'அஹிர்புத்ய்ய', 'பூஷன்'];
 const NAKSHATRA_ANIMAL = ['Horse', 'Elephant', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Rat', 'Rat', 'Cow', 'Buffalo', 'Tiger', 'Male Buffalo', 'Tiger', 'Deer', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Dog', 'Female Snake', 'Female Buffalo'];
 const NAKSHATRA_ANIMAL_TAMIL = ['குதிரை', 'யானை', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'எலி', 'எலி', 'பசு', 'எருமை', 'புலி', 'ஆண் எருமை', 'புலி', 'மான்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் நாய்', 'பெண் பாம்பு', 'பெண் எருமை'];
 const NAKSHATRA_TREE = ['Strychnine', 'Indian gooseberry', 'Fig', 'Jamun', 'Khadir', 'Black catechu', 'Bamboo', 'Peepal', 'Punnaga', 'Banyan', 'Palash', 'Jackfruit', 'Sandalwood', 'Bilva', 'Arjuna', 'Banyan', 'Bakula', 'Sala', 'Bamboo', 'Pipal', 'Jackfruit', 'Arjuna', 'Kadamba', 'Neem', 'Mango', 'Kadamba', 'Indian butter'];
 const NAKSHATRA_TREE_TAMIL = ['எட்டி', 'நெல்லி', 'அத்தி', 'நாவல்', 'கற்பூரவேங்கை', 'கருங்காலி', 'மூங்கில்', 'அரசு', 'புன்னாகம்', 'ஆலம்', 'பலாசு', 'பலா', 'சந்தனம்', 'வில்வம்', 'மருதம்', 'ஆலம்', 'இலுப்பை', 'சாலம்', 'மூங்கில்', 'அரசு', 'பலா', 'மருதம்', 'கடம்பு', 'வேப்பம்', 'மாம்பழம்', 'கடம்பு', 'இலுப்பை'];
-const NAKSHATRA_GANAM = ['Deva', 'Human', 'Rakshasa', 'Human', 'Human', 'Human', 'Deva', 'Deva', 'Rakshasa', 'Rakshasa', 'Human', 'Human', 'Rakshasa', 'Deva', 'Rakshasa', 'Rakshasa', 'Deva', 'Rakshasa', 'Rakshasa', 'Human', 'Human', 'Deva', 'Rakshasa', 'Rakshasa', 'Rakshasa', 'Deva', 'Deva'];
-const NAKSHATRA_GANAM_TAMIL = ['தேவ', 'மனித', 'ராட்சச', 'மனித', 'மனித', 'மனித', 'தேவ', 'தேவ', 'ராட்சச', 'ராட்சச', 'மனித', 'மனித', 'ராட்சச', 'தேவ', 'ராட்சச', 'ராட்சச', 'தேவ', 'ராட்சச', 'ராட்சச', 'மனித', 'மனித', 'தேவ', 'ராட்சச', 'ராட்சச', 'ராட்சச', 'தேவ', 'தேவ'];
-const NAKSHATRA_BIRD = ['Crow', 'Crow', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Owl', 'Owl', 'Cow', 'Buffalo', 'Pigeon', 'Male Buffalo', 'Male Cuckoo', 'Female Cuckoo', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Crow', 'Female Crow', 'Female Buffalo'];
-const NAKSHATRA_BIRD_TAMIL = ['காகம்', 'காகம்', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'ஆந்தை', 'ஆந்தை', 'பசு', 'எருமை', 'புறா', 'ஆண் குயில்', 'பெண் குயில்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் காகம்', 'பெண் காகம்', 'பெண் எருமை'];
-const NAKSHATRA_YONI = ['Horse', 'Elephant', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Rat', 'Rat', 'Cow', 'Buffalo', 'Tiger', 'Male Buffalo', 'Tiger', 'Deer', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Dog', 'Female Snake', 'Female Buffalo'];
-const NAKSHATRA_YONI_TAMIL = ['குதிரை', 'யானை', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'எலி', 'எலி', 'பசு', 'எருமை', 'புலி', 'ஆண் எருமை', 'புலி', 'மான்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் நாய்', 'பெண் பாம்பு', 'பெண் எருமை'];
-const NAKSHATRA_GOTHRAM = ['Bharadwaja', 'Bharadwaja', 'Bharadwaja', 'Atri', 'Atri', 'Atri', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Pulasthya', 'Pulasthya', 'Pulasthya', 'Pulasthya', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Bharadwaja'];
-const NAKSHATRA_GOTHRAM_TAMIL = ['பரத்வாஜ', 'பரத்வாஜ', 'பரத்வாஜ', 'அத்திரி', 'அத்திரி', 'அத்திரி', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'பரத்வாஜ'];
+const NAKSHATRA_GANAM = ['Deva', 'Human', 'Rakshasa', 'Human', 'Human', 'Human', 'Deva', 'Deva', 'Rakshasa', 'Rakshasa', 'Human', 'Human', 'Rakshasa', 'Asura', 'Rakshasa', 'Rakshasa', 'Deva', 'Rakshasa', 'Rakshasa', 'Human', 'Human', 'Deva', 'Rakshasa', 'Rakshasa', 'Rakshasa', 'Deva', 'Deva'];
+const NAKSHATRA_GANAM_TAMIL = ['தேவ', 'மனித', 'ராட்சச', 'மனித', 'மனித', 'மனித', 'தேவ', 'தேவ', 'ராட்சச', 'ராட்சச', 'மனித', 'மனித', 'ராட்சச', 'அசுர', 'ராட்சச', 'ராட்சச', 'தேவ', 'ராட்சச', 'ராட்சச', 'மனித', 'மனித', 'தேவ', 'ராட்சச', 'ராட்சச', 'ராட்சச', 'தேவ', 'தேவ'];
+const NAKSHATRA_BIRD = ['Crow', 'Crow', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Owl', 'Owl', 'Cow', 'Buffalo', 'Crow', 'Male Buffalo', 'Male Cuckoo', 'Female Cuckoo', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Crow', 'Female Crow', 'Female Buffalo'];
+const NAKSHATRA_BIRD_TAMIL = ['காகம்', 'காகம்', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'ஆந்தை', 'ஆந்தை', 'பசு', 'எருமை', 'காகம்', 'ஆண் குயில்', 'பெண் குயில்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் காகம்', 'பெண் காகம்', 'பெண் எருமை'];
+const NAKSHATRA_YONI = ['Horse', 'Elephant', 'Goat', 'Serpent', 'Serpent', 'Dog', 'Cat', 'Goat', 'Cat', 'Rat', 'Rat', 'Cow', 'Buffalo', 'Female', 'Male Buffalo', 'Tiger', 'Deer', 'Hare', 'Dog', 'Monkey', 'Mongoose', 'Monkey', 'Lion', 'Horse', 'Female Dog', 'Female Snake', 'Female Buffalo'];
+const NAKSHATRA_YONI_TAMIL = ['குதிரை', 'யானை', 'ஆடு', 'பாம்பு', 'பாம்பு', 'நாய்', 'பூனை', 'ஆடு', 'பூனை', 'எலி', 'எலி', 'பசு', 'எருமை', 'பெண்', 'ஆண் எருமை', 'புலி', 'மான்', 'முயல்', 'நாய்', 'குரங்கு', 'முன்குட்டி', 'குரங்கு', 'சிங்கம்', 'குதிரை', 'பெண் நாய்', 'பெண் பாம்பு', 'பெண் எருமை'];
+const NAKSHATRA_GOTHRAM = ['Bharadwaja', 'Bharadwaja', 'Bharadwaja', 'Atri', 'Atri', 'Atri', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Pulasthya', 'Pulasthya', 'Pulasthya', 'Pulasthya', 'Kratu', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Marichi', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Vasishtha', 'Bharadwaja'];
+const NAKSHATRA_GOTHRAM_TAMIL = ['பரத்வாஜ', 'பரத்வாஜ', 'பரத்வாஜ', 'அத்திரி', 'அத்திரி', 'அத்திரி', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'புலஸ்தியர்', 'க்ரது', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'மரீசி', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'வசிஷ்டர்', 'பரத்வாஜ'];
 // Bhutham (element) by Rasi: Mesha/Vrishabha=Earth, Mithuna/Kanya=Air, etc. Simplified: 0-2 Fire, 3-5 Water, 6-8 Air, 9-11 Earth (alternate)
 const RASI_BHUTHAM = ['Fire', 'Earth', 'Air', 'Water', 'Fire', 'Earth', 'Air', 'Water', 'Fire', 'Earth', 'Air', 'Water'];
 const RASI_BHUTHAM_TAMIL = ['நெருப்பு', 'பூமி', 'காற்று', 'நீர்', 'நெருப்பு', 'பூமி', 'காற்று', 'நீர்', 'நெருப்பு', 'பூமி', 'காற்று', 'நீர்'];
@@ -334,12 +334,16 @@ function getYoga(moonLongitude: number, sunLongitude: number): number {
   return Math.floor(sum / (360 / 27)) % 27;
 }
 
-// Karana: 60 half-tithis, 11 names repeat (each karana = 6°)
+// Karana: 60 half-tithis. Fixed karanas at 0, 57, 58, 59; movable 1-56 repeat Bava..Visti (0-6).
 function getKarana(moonLongitude: number, sunLongitude: number): number {
   let diff = moonLongitude - sunLongitude;
   if (diff < 0) diff += 360;
   const halfTithi = Math.floor(diff / 6) % 60;
-  return halfTithi % 11;
+  if (halfTithi === 0) return 10;   // Kimstughna (Shukla Pratipad 1st half)
+  if (halfTithi === 57) return 7;   // Shakuna (Krishna Chaturdashi 2nd half)
+  if (halfTithi === 58) return 8;    // Chatushpada (Amavasya 1st half)
+  if (halfTithi === 59) return 9;    // Naga (Amavasya 2nd half)
+  return (halfTithi - 1) % 7;       // 1-56: Bava(0), Balava(1), Kaulava(2), Taitila(3), Garija(4), Vanija(5), Visti(6)
 }
 
 // Weekday from Gregorian date (0=Sunday .. 6=Saturday)
@@ -478,11 +482,9 @@ function calculateLagnam(jd: number, lat: number, lon: number): number {
   const latRad = lat * Math.PI / 180;
   const lstRad = lstDegrees * Math.PI / 180;
 
-  // Calculate ascendant using correct spherical trigonometry formula
-  // Standard formula: tan(Asc) = sin(LST) / (cos(LST) * cos(eps) + tan(lat) * sin(eps))
-  // Using atan2: y = sin(LST), x = cos(LST) * cos(eps) + tan(lat) * sin(eps)
-  const y = Math.sin(lstRad);
-  const x = Math.cos(lstRad) * Math.cos(epsRad) + Math.tan(latRad) * Math.sin(epsRad);
+  // Ascendant longitude: tan(Asc) = (cos(eps)*sin(LST) + sin(eps)*tan(lat)*cos(LST)) / (cos(eps)*cos(LST) - sin(eps)*tan(lat)*sin(LST))
+  const y = Math.cos(epsRad) * Math.sin(lstRad) + Math.sin(epsRad) * Math.tan(latRad) * Math.cos(lstRad);
+  const x = Math.cos(epsRad) * Math.cos(lstRad) - Math.sin(epsRad) * Math.tan(latRad) * Math.sin(lstRad);
   let ascendant = Math.atan2(y, x) * 180 / Math.PI;
 
   // Normalize to 0-360 (atan2 returns -180 to +180, we want 0 to 360)
@@ -616,8 +618,9 @@ export const calculateAstrologyDetails = async (
     const yoniTamilStr = NAKSHATRA_YONI_TAMIL[nIdx];
     const gothramStr = NAKSHATRA_GOTHRAM[nIdx];
     const gothramTamilStr = NAKSHATRA_GOTHRAM_TAMIL[nIdx];
-    const bhuthamStr = RASI_BHUTHAM[moonRasi];
-    const bhuthamTamilStr = RASI_BHUTHAM_TAMIL[moonRasi];
+    // Bhutham (element) by Ascendant/Lagnam sign (per standard panchangam display)
+    const bhuthamStr = RASI_BHUTHAM[lagnamRasi];
+    const bhuthamTamilStr = RASI_BHUTHAM_TAMIL[lagnamRasi];
 
     // Validation: Ensure all critical data is present
     if (isNaN(moonLongitudeSidereal) || !ayanamsa || isNaN(lagnamLongitude)) {
