@@ -5,7 +5,7 @@ import { calculateAstrologyDetails } from './astrologyCalculator';
 
 // Version: 2.0 - Updated model and API key
 // API Key is hardcoded here for development
-const apiKey = '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';
+const apiKey = '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';
 
 const groq = new Groq({
   apiKey: apiKey,
