@@ -80,13 +80,13 @@ Endpoint from `MODULES.md`:
 |--------|----------|------|-------------|
 | POST | `/josiyam/single` | Token | Calculate 20-category single-person josiyam |
 
-**Auth:** Same Firebase token middleware (`authenticate`) as Module 1.  
+**Auth:** Same JWT token middleware (`authenticate`) as Module 1.  
 **Base URL:** `http://localhost:3000/api/josiyam/single` (dev).
 
 ### 3.2 Request Contract
 
 - **Headers:**
-  - `Authorization: Bearer <firebase_id_token>`
+  - `Authorization: Bearer <jwtToken>`
   - `Content-Type: application/json`
 - **Body:**
 
@@ -156,7 +156,7 @@ Errors use the standard backend format:
 
 - **Controller (`josiyamController.single`):**
   - Validate body (`useProfile` + optional dateOfBirth/birthTime/birthPlace).
-  - Fetch profile from DB when `useProfile == true` using `req.user.uid`.
+  - Fetch profile from DB when `useProfile == true` using `req.user.userId`.
   - Call `josiyamService.calculateSingle(...)` with final birth data.
   - Return formatted response with `successResponse(...)`.
 
@@ -179,7 +179,7 @@ Reuse `users` from Module 1 and add:
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `userId` | ObjectId or firebaseUid | Link to user |
+| `userId` | ObjectId | Link to user |
 | `type` | string | `"single"` (future: `"couple"`, etc.) |
 | `input` | object | DOB, birthTime, birthPlace, language |
 | `chart` | object | rasi, nakshatra, lagnam, ayanamsa, etc. |
@@ -209,8 +209,8 @@ You can implement single-person josiyam as:
 ### 4.2 Data Flow (Bloc / Use Case)
 
 1. UI dispatches `FetchSingleJosiyamRequested` event.
-2. Auth layer provides current Firebase user and token:
-   - `final token = await FirebaseAuth.instance.currentUser?.getIdToken();`
+2. Auth layer provides current user and JWT token:
+   - `final token = authState.token;`
 3. Use case `GetSingleJosiyam` (to be created) calls repository:
    - `authRepository.getSingleJosiyam(token)`.
 4. Repository calls a new method in `AuthRemoteDataSource` (or separate `JosiyamRemoteDataSource`) to hit `/josiyam/single`.
@@ -296,7 +296,7 @@ When `useProfile == false`:
    → Tap "My Josiyam"
        → Check profile completeness (DOB, time, place)
            → Incomplete → Navigate to Profile (Module 1)
-           → Complete → Get Firebase ID token
+           → Complete → Get JWT token
                → POST /api/josiyam/single (useProfile: true, Authorization: Bearer <token>)
                    → Backend: verify token → load profile → calculate chart + 20 categories → call Groq for AI text → cache result → respond
                → Flutter: parse response → show chart + 20 categories
@@ -309,7 +309,7 @@ When `useProfile == false`:
 ### Backend (Node Express)
 
 - [ ] Create `josiyamController.single` and route `POST /josiyam/single` under `/api`.
-- [ ] Use `authenticate` middleware to verify Firebase token.
+- [ ] Use `authenticate` middleware to verify JWT token.
 - [ ] Implement validation for `useProfile` vs manual input.
 - [ ] Read profile from `users` collection when `useProfile == true`.
 - [ ] Implement `josiyamService.calculateSingle` to:
